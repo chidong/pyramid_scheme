@@ -1,9 +1,7 @@
-import React from "react";
-
-const Routes = () => (
-  <div>
-    <h1>Routes</h1>
-  </div>
-);
-
-export default Routes;
+export const SIGN_UP = "/signup";
+export const SIGN_IN = "/signin";
+export const LANDING = "/";
+export const HOME = "/home";
+export const ACCOUNT = "/account";
+export const ADMIN = "/admin";
+export const PASSWORD_FORGET = "/pw-forget";
