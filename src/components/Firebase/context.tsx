@@ -1,5 +1,11 @@
-import { createContext } from "react";
+import React from "react";
 
-const FirebaseContext = createContext<any | null>(null);
+const FirebaseContext = React.createContext<any | null>(null);
+
+export const withFirebase = (Component: any) => (props: any) => (
+  <FirebaseContext.Consumer>
+    {(firebase) => <Component {...props} firebase={firebase} />}
+  </FirebaseContext.Consumer>
+);
 
 export default FirebaseContext;
