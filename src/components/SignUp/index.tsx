@@ -11,14 +11,6 @@ const SignUpPage = () => (
   </div>
 );
 
-const INITIAL_STATE = {
-  username: "",
-  email: "",
-  passwordOne: "",
-  passwordTwo: "",
-  error: null,
-};
-
 const SignUpFormBase = (props: any) => {
   const [username, setUsername] = useState("");
   const [email, setEmail] = useState("");
@@ -44,25 +36,6 @@ const SignUpFormBase = (props: any) => {
     event.preventDefault();
   };
 
-  const onChange = (event: React.FormEvent) => {
-    switch ((event.target as HTMLInputElement).name) {
-      case "username":
-        setUsername((event.target as HTMLInputElement).value);
-        break;
-      case "email":
-        setEmail((event.target as HTMLInputElement).value);
-        break;
-      case "passwordOne":
-        setPasswordOne((event.target as HTMLInputElement).value);
-        break;
-      case "passwordTwo":
-        setPasswordTwo((event.target as HTMLInputElement).value);
-        break;
-      default:
-      // code block
-    }
-  };
-
   const isInvalid =
     passwordOne !== passwordTwo ||
     passwordOne === "" ||
@@ -74,28 +47,28 @@ const SignUpFormBase = (props: any) => {
       <input
         name="username"
         value={username}
-        onChange={onChange}
+        onChange={(e) => setUsername(e.currentTarget.value)}
         type="text"
         placeholder="Full Name"
       />
       <input
         name="email"
         value={email}
-        onChange={onChange}
+        onChange={(e) => setEmail(e.currentTarget.value)}
         type="text"
         placeholder="Email Address"
       />
       <input
         name="passwordOne"
         value={passwordOne}
-        onChange={onChange}
+        onChange={(e) => setPasswordOne(e.currentTarget.value)}
         type="password"
         placeholder="Password"
       />
       <input
         name="passwordTwo"
         value={passwordTwo}
-        onChange={onChange}
+        onChange={(e) => setPasswordTwo(e.currentTarget.value)}
         type="password"
         placeholder="Confirm Password"
       />
