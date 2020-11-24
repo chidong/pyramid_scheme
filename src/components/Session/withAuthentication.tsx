@@ -8,9 +8,12 @@ const withAuthentication = (Component: React.FunctionComponent) => {
     const [authUser, setAuthUser] = useState(null);
 
     useEffect(() => {
-      const listener = props.firebase.auth.onAuthStateChanged(
+      const listener = props.firebase.onAuthUserListener(
         (authUser: any) => {
-          authUser ? setAuthUser(authUser) : setAuthUser(null);
+          setAuthUser(authUser);
+        },
+        () => {
+          setAuthUser(null);
         }
       );
 
