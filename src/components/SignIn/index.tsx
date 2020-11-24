@@ -11,6 +11,7 @@ const SignInPage = () => (
   <div>
     <h1>SignIn</h1>
     <SignInForm />
+    <SignInGoogle />
     <PasswordForgetLink />
     <SignUpLink />
   </div>
@@ -64,8 +65,44 @@ const SignInFormBase = (props: any) => {
   );
 };
 
+const SignInGoogleBase = (props: any) => {
+  const [error, setError] = useState(null);
+
+  const onSubmit = (event: React.FormEvent) => {
+    props.firebase
+      .doSignInWithGoogle()
+      .then((socialAuthUser: any) => {
+        // Create a user in your Firebase Realtime Database too
+        if (socialAuthUser.additionalUserInfo.isNewUser) {
+          return props.firebase.user(socialAuthUser.user.uid).set({
+            username: socialAuthUser.user.displayName,
+            email: socialAuthUser.user.email,
+            roles: {},
+          });
+        }
+      })
+      .then(() => {
+        setError(null);
+        props.history.push(ROUTES.HOME);
+      })
+      .catch((error: any) => {
+        setError(error);
+      });
+    event.preventDefault();
+  };
+
+  return (
+    <form onSubmit={onSubmit}>
+      <button type="submit">Sign In with Google</button>
+      {error && <p>{(error as any).message}</p>}
+    </form>
+  );
+};
+
 const SignInForm = compose(withRouter, withFirebase)(SignInFormBase);
+
+const SignInGoogle = compose(withRouter, withFirebase)(SignInGoogleBase);
 
 export default SignInPage;
 
-export { SignInForm };
+export { SignInForm, SignInGoogle };

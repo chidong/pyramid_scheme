@@ -16,12 +16,15 @@ const config = {
 class Firebase {
   auth: app.auth.Auth;
   db: app.database.Database;
+  googleProvider: app.auth.GoogleAuthProvider;
 
   constructor() {
     app.initializeApp(config);
 
     this.auth = app.auth();
     this.db = app.database();
+
+    this.googleProvider = new app.auth.GoogleAuthProvider();
   }
 
   // *** Auth API ***
@@ -31,6 +34,8 @@ class Firebase {
 
   doSignInWithEmailAndPassword = (email: string, password: string) =>
     this.auth.signInWithEmailAndPassword(email, password);
+
+  doSignInWithGoogle = () => this.auth.signInWithPopup(this.googleProvider);
 
   doSignOut = () => this.auth.signOut();
 
