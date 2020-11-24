@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { compose } from "recompose";
 import { withFirebase } from "../Firebase";
-import { withAuthorization } from "../Session";
+import { withAuthorization, withEmailVerification } from "../Session";
 import * as ROLES from "../../constants/roles";
 
 interface User {
@@ -64,4 +64,8 @@ const UserList = (props: any) => (
 
 const condition = (authUser: any) => authUser && !!authUser.roles[ROLES.ADMIN];
 
-export default compose(withAuthorization(condition), withFirebase)(Admin);
+export default compose(
+  withEmailVerification,
+  withAuthorization(condition),
+  withFirebase
+)(Admin);

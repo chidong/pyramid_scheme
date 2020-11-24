@@ -38,6 +38,9 @@ const SignUpFormBase = (props: any) => {
         });
       })
       .then(() => {
+        return props.firebase.doSendEmailVerification();
+      })
+      .then(() => {
         setUsername("");
         setEmail("");
         setPasswordOne("");
