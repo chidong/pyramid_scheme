@@ -84,6 +84,7 @@ const MessagesBase: React.FC = (props: any) => {
           {loading && <div>Loading ...</div>}
           {messages ? (
             <MessageList
+              authUser={authUser}
               messages={messages}
               onRemoveMessage={onRemoveMessage}
               onEditMessage={onEditMessage}
@@ -111,6 +112,7 @@ const MessageList = (props: any) => (
     {props.messages.map((message: any) => (
       <MessageItem
         key={message.uid}
+        authUser={props.authUser}
         message={message}
         onRemoveMessage={props.onRemoveMessage}
         onEditMessage={props.onEditMessage}
@@ -147,21 +149,25 @@ const MessageItem = (props: any) => {
           {props.message.editedAt && <span>(Edited)</span>}
         </span>
       )}
-      {editMode ? (
-        <span>
-          <button onClick={onSaveEditText}>Save</button>
-          <button onClick={onToggleEditMode}>Reset</button>
-        </span>
-      ) : (
-        <button onClick={onToggleEditMode}>Edit</button>
-      )}
-      {!editMode && (
-        <button
-          type="button"
-          onClick={() => props.onRemoveMessage(props.message.uid)}
-        >
-          Delete
-        </button>
+      {props.authUser.uid === props.message.userId && (
+        <>
+          {editMode ? (
+            <span>
+              <button onClick={onSaveEditText}>Save</button>
+              <button onClick={onToggleEditMode}>Reset</button>
+            </span>
+          ) : (
+            <button onClick={onToggleEditMode}>Edit</button>
+          )}
+          {!editMode && (
+            <button
+              type="button"
+              onClick={() => props.onRemoveMessage(props.message.uid)}
+            >
+              Delete
+            </button>
+          )}
+        </>
       )}
     </li>
   );
