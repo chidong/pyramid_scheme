@@ -60,13 +60,20 @@ const MessagesBase: React.FC = (props: any) => {
     event.preventDefault();
   };
 
+  const onRemoveMessage = (uid: string) => {
+    props.firebase.message(uid).remove();
+  };
+
   return (
     <AuthUserContext.Consumer>
       {(authUser) => (
         <div>
           {loading && <div>Loading ...</div>}
           {messages ? (
-            <MessageList messages={messages} />
+            <MessageList
+              messages={messages}
+              onRemoveMessage={onRemoveMessage}
+            />
           ) : (
             <div>There are no messages ...</div>
           )}
@@ -88,7 +95,11 @@ const MessagesBase: React.FC = (props: any) => {
 const MessageList = (props: any) => (
   <ul>
     {props.messages.map((message: any) => (
-      <MessageItem key={message.uid} message={message} />
+      <MessageItem
+        key={message.uid}
+        message={message}
+        onRemoveMessage={props.onRemoveMessage}
+      />
     ))}
   </ul>
 );
@@ -96,6 +107,12 @@ const MessageList = (props: any) => (
 const MessageItem = (props: any) => (
   <li>
     <strong>{props.message.userId}</strong> {props.message.text}
+    <button
+      type="button"
+      onClick={() => props.onRemoveMessage(props.message.uid)}
+    >
+      Delete
+    </button>
   </li>
 );
 
