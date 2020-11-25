@@ -31,21 +31,24 @@ const MessagesBase: React.FC = (props: any) => {
   useEffect(() => {
     setLoading(true);
 
-    props.firebase.messages().on("value", (snapshot: any) => {
-      // convert messages list from snapshot
-      const messageObject = snapshot.val();
-      if (messageObject) {
-        const messageList = Object.keys(messageObject).map((key) => ({
-          ...messageObject[key],
-          uid: key,
-        }));
-        setMessages(messageList);
-        setLoading(false);
-      } else {
-        setLoading(false);
-        setMessages(null);
-      }
-    });
+    props.firebase
+      .messages()
+      .orderByChild("createdAt")
+      .on("value", (snapshot: any) => {
+        // convert messages list from snapshot
+        const messageObject = snapshot.val();
+        if (messageObject) {
+          const messageList = Object.keys(messageObject).map((key) => ({
+            ...messageObject[key],
+            uid: key,
+          }));
+          setMessages(messageList);
+          setLoading(false);
+        } else {
+          setLoading(false);
+          setMessages(null);
+        }
+      });
 
     return () => {
       props.firebase.messages().off();
