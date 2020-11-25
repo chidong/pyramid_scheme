@@ -17,9 +17,13 @@ class Firebase {
   auth: app.auth.Auth;
   db: app.database.Database;
   googleProvider: app.auth.GoogleAuthProvider;
+  serverValue: typeof app.database.ServerValue;
 
   constructor() {
     app.initializeApp(config);
+
+    /* Helper */
+    this.serverValue = app.database.ServerValue;
 
     this.auth = app.auth();
     this.db = app.database();
