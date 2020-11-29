@@ -44,23 +44,25 @@ const Admin = (props: any) => {
   );
 };
 
-const UserList = (props: any) => (
-  <ul>
-    {props.users.map((user: User) => (
-      <li key={user.uid}>
-        <span>
-          <strong>ID:</strong> {user.uid}
-        </span>
-        <span>
-          <strong>E-Mail:</strong> {user.email}
-        </span>
-        <span>
-          <strong>Username:</strong> {user.username}
-        </span>
-      </li>
-    ))}
-  </ul>
-);
+const UserList = ({ users }: { users: User[] }) => {
+  return (
+    <ul>
+      {users.map((user: User) => (
+        <li key={user.uid}>
+          <span>
+            <strong>ID:</strong> {user.uid}
+          </span>
+          <span>
+            <strong>E-Mail:</strong> {user.email}
+          </span>
+          <span>
+            <strong>Username:</strong> {user.username}
+          </span>
+        </li>
+      ))}
+    </ul>
+  );
+};
 
 const condition = (authUser: any) => authUser && !!authUser.roles[ROLES.ADMIN];
 
