@@ -4,52 +4,117 @@ import SignOutButton from "../SignOut";
 import * as ROUTES from "../../constants/routes";
 import { AuthUserContext } from "../Session";
 import * as ROLES from "../../constants/roles";
+import {
+  AppBar,
+  Toolbar,
+  IconButton,
+  List,
+  ListItem,
+  Container,
+} from "@material-ui/core";
+import { Home } from "@material-ui/icons";
+import { makeStyles } from "@material-ui/core/styles";
 
-const Navigation = () => (
-  <div>
-    <AuthUserContext.Consumer>
-      {(authUser) =>
-        authUser ? (
-          <NavigationAuth authUser={authUser} />
-        ) : (
-          <NavigationNonAuth />
-        )
-      }
-    </AuthUserContext.Consumer>
-  </div>
-);
+const useStyles = makeStyles({
+  navbarDisplayFlex: {
+    display: `flex`,
+    justifyContent: `space-between`,
+  },
+  navDisplayFlex: {
+    display: `flex`,
+    justifyContent: `space-between`,
+  },
+  linkText: {
+    textDecoration: `none`,
+    textTransform: `uppercase`,
+    color: `white`,
+  },
+  typographyStyles: {
+    flex: 1,
+  },
+});
 
-const NavigationAuth = (props: any) => (
-  <ul>
-    <li>
-      <Link to={ROUTES.LANDING}>Landing</Link>
-    </li>
-    <li>
-      <Link to={ROUTES.HOME}>Home</Link>
-    </li>
-    <li>
-      <Link to={ROUTES.ACCOUNT}>Account</Link>
-    </li>
-    {!!props.authUser.roles[ROLES.ADMIN] && (
-      <li>
-        <Link to={ROUTES.ADMIN}>Admin</Link>
-      </li>
-    )}
-    <li>
-      <SignOutButton />
-    </li>
-  </ul>
-);
+const Navigation = () => {
+  const classes = useStyles();
 
-const NavigationNonAuth = () => (
-  <ul>
-    <li>
-      <Link to={ROUTES.LANDING}>Landing</Link>
-    </li>
-    <li>
-      <Link to={ROUTES.SIGN_IN}>Sign In</Link>
-    </li>
-  </ul>
-);
+  return (
+    <AppBar>
+      <Toolbar>
+        <Container className={classes.navbarDisplayFlex}>
+          <IconButton edge="start" color="inherit" aria-label="home">
+            <Home fontSize="large" />
+          </IconButton>
+
+          <List
+            component="nav"
+            aria-labelledby="main navigation"
+            className={classes.navDisplayFlex}
+          >
+            <AuthUserContext.Consumer>
+              {(authUser) =>
+                authUser ? (
+                  <NavigationAuth authUser={authUser} />
+                ) : (
+                  <NavigationNonAuth />
+                )
+              }
+            </AuthUserContext.Consumer>
+          </List>
+        </Container>
+      </Toolbar>
+    </AppBar>
+  );
+};
+
+const NavigationAuth = (props: any) => {
+  const classes = useStyles();
+  return (
+    <>
+      <ListItem button>
+        <Link to={ROUTES.HOME} className={classes.linkText}>
+          Home
+        </Link>
+      </ListItem>
+      <ListItem button>
+        <Link to={ROUTES.ACCOUNT} className={classes.linkText}>
+          Account
+        </Link>
+      </ListItem>
+      {!!props.authUser.roles[ROLES.ADMIN] && (
+        <ListItem button>
+          <Link to={ROUTES.ADMIN} className={classes.linkText}>
+            Admin
+          </Link>
+        </ListItem>
+      )}
+      <ListItem button>
+        <SignOutButton />
+      </ListItem>
+    </>
+  );
+};
+
+const NavigationNonAuth = () => {
+  const classes = useStyles();
+  return (
+    <>
+      <ListItem button>
+        <Link to={ROUTES.LANDING} className={classes.linkText}>
+          Landing
+        </Link>
+      </ListItem>
+      <ListItem button>
+        <Link to={ROUTES.SIGN_IN} className={classes.linkText}>
+          Sign In
+        </Link>
+      </ListItem>
+      <ListItem button>
+        <Link to={ROUTES.SIGN_UP} className={classes.linkText}>
+          Sign Up
+        </Link>
+      </ListItem>
+    </>
+  );
+};
 
 export default Navigation;
