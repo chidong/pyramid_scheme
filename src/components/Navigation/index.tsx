@@ -15,7 +15,18 @@ import {
 import { Home } from "@material-ui/icons";
 import { makeStyles } from "@material-ui/core/styles";
 
-const useStyles = makeStyles({
+const useStyles = makeStyles((theme) => ({
+  root: {
+    flexGrow: 1,
+  },
+  flex: {
+    flex: 1,
+  },
+  menuButton: {
+    marginLeft: -12,
+    marginRight: 20,
+  },
+  toolbarMargin: theme.mixins.toolbar,
   navbarDisplayFlex: {
     display: `flex`,
     justifyContent: `space-between`,
@@ -32,37 +43,40 @@ const useStyles = makeStyles({
   typographyStyles: {
     flex: 1,
   },
-});
+}));
 
 const Navigation = () => {
   const classes = useStyles();
 
   return (
-    <AppBar>
-      <Toolbar>
-        <Container className={classes.navbarDisplayFlex}>
-          <IconButton edge="start" color="inherit" aria-label="home">
-            <Home fontSize="large" />
-          </IconButton>
+    <div className={classes.root}>
+      <AppBar>
+        <Toolbar>
+          <Container className={classes.navbarDisplayFlex}>
+            <IconButton edge="start" color="inherit" aria-label="home">
+              <Home fontSize="large" />
+            </IconButton>
 
-          <List
-            component="nav"
-            aria-labelledby="main navigation"
-            className={classes.navDisplayFlex}
-          >
-            <AuthUserContext.Consumer>
-              {(authUser) =>
-                authUser ? (
-                  <NavigationAuth authUser={authUser} />
-                ) : (
-                  <NavigationNonAuth />
-                )
-              }
-            </AuthUserContext.Consumer>
-          </List>
-        </Container>
-      </Toolbar>
-    </AppBar>
+            <List
+              component="nav"
+              aria-labelledby="main navigation"
+              className={classes.navDisplayFlex}
+            >
+              <AuthUserContext.Consumer>
+                {(authUser) =>
+                  authUser ? (
+                    <NavigationAuth authUser={authUser} />
+                  ) : (
+                    <NavigationNonAuth />
+                  )
+                }
+              </AuthUserContext.Consumer>
+            </List>
+          </Container>
+        </Toolbar>
+      </AppBar>
+      <div className={classes.toolbarMargin} />
+    </div>
   );
 };
 
