@@ -1,5 +1,5 @@
-import React from "react";
-import { Link } from "react-router-dom";
+import React, { useState } from "react";
+import { NavLink, withRouter } from "react-router-dom";
 import SignOutButton from "../SignOut";
 import * as ROUTES from "../../constants/routes";
 import { AuthUserContext } from "../Session";
@@ -7,128 +7,120 @@ import * as ROLES from "../../constants/roles";
 import {
   AppBar,
   Toolbar,
+  Typography,
   IconButton,
-  List,
-  ListItem,
-  Container,
+  Drawer,
+  MenuList,
+  MenuItem,
+  ListItemText,
 } from "@material-ui/core";
-import { Home } from "@material-ui/icons";
-import { makeStyles } from "@material-ui/core/styles";
+import { createStyles, makeStyles, Theme } from "@material-ui/core/styles";
+import MenuIcon from "@material-ui/icons/Menu";
 
-const useStyles = makeStyles((theme) => ({
-  root: {
-    flexGrow: 1,
-  },
-  flex: {
-    flex: 1,
-  },
-  menuButton: {
-    marginLeft: -12,
-    marginRight: 20,
-  },
-  toolbarMargin: theme.mixins.toolbar,
-  navbarDisplayFlex: {
-    display: `flex`,
-    justifyContent: `space-between`,
-  },
-  navDisplayFlex: {
-    display: `flex`,
-    justifyContent: `space-between`,
-  },
-  linkText: {
-    textDecoration: `none`,
-    textTransform: `uppercase`,
-    color: `white`,
-  },
-  typographyStyles: {
-    flex: 1,
-  },
-}));
+const useStyles = makeStyles((theme: Theme) =>
+  createStyles({
+    root: {
+      flexGrow: 1,
+    },
+    menuButton: {
+      marginRight: theme.spacing(2),
+    },
+    title: {
+      flexGrow: 1,
+    },
+    toolbarMargin: theme.mixins.toolbar,
+    drawer: {
+      width: 300,
+    },
+    fullList: {
+      width: "auto",
+    },
+  })
+);
 
-const Navigation = () => {
+const Navigation: React.FC = (props: any) => {
   const classes = useStyles();
+  const [isOpen, setIsOpen] = useState(false);
+
+  const toggleDrawer = (open: boolean) => (
+    event: React.KeyboardEvent | React.MouseEvent
+  ) => {
+    if (
+      event.type === "keydown" &&
+      ((event as React.KeyboardEvent).key === "Tab" ||
+        (event as React.KeyboardEvent).key === "Shift")
+    ) {
+      return;
+    }
+
+    setIsOpen(open);
+  };
+
+  const activeRoute = (routeName: string): boolean => {
+    return props.location.pathname === routeName ? true : false;
+  };
 
   return (
-    <div className={classes.root}>
-      <AppBar>
-        <Toolbar>
-          <Container className={classes.navbarDisplayFlex}>
-            <IconButton edge="start" color="inherit" aria-label="home">
-              <Home fontSize="large" />
-            </IconButton>
-
-            <List
-              component="nav"
-              aria-labelledby="main navigation"
-              className={classes.navDisplayFlex}
+    <>
+      <div className={classes.root}>
+        <AppBar>
+          <Toolbar>
+            <IconButton
+              edge="start"
+              className={classes.menuButton}
+              color="inherit"
+              aria-label="menu"
+              onClick={toggleDrawer(true)}
             >
-              <AuthUserContext.Consumer>
-                {(authUser) =>
-                  authUser ? (
-                    <NavigationAuth authUser={authUser} />
-                  ) : (
-                    <NavigationNonAuth />
-                  )
-                }
-              </AuthUserContext.Consumer>
-            </List>
-          </Container>
-        </Toolbar>
-      </AppBar>
-      <div className={classes.toolbarMargin} />
-    </div>
-  );
-};
-
-const NavigationAuth = (props: any) => {
-  const classes = useStyles();
-  return (
-    <>
-      <ListItem button>
-        <Link to={ROUTES.HOME} className={classes.linkText}>
-          Home
-        </Link>
-      </ListItem>
-      <ListItem button>
-        <Link to={ROUTES.ACCOUNT} className={classes.linkText}>
-          Account
-        </Link>
-      </ListItem>
-      {!!props.authUser.roles[ROLES.ADMIN] && (
-        <ListItem button>
-          <Link to={ROUTES.ADMIN} className={classes.linkText}>
-            Admin
-          </Link>
-        </ListItem>
-      )}
-      <ListItem button>
-        <SignOutButton />
-      </ListItem>
+              <MenuIcon />
+            </IconButton>
+            <Typography variant="h6" className={classes.title}>
+              Pyramid
+            </Typography>
+          </Toolbar>
+        </AppBar>
+        <div className={classes.toolbarMargin} />
+      </div>
+      <Drawer
+        classes={{ paper: classes.drawer }}
+        open={isOpen}
+        onClose={toggleDrawer(false)}
+      >
+        <div
+          className={classes.fullList}
+          role="presentation"
+          onClick={toggleDrawer(false)}
+          onKeyDown={toggleDrawer(false)}
+        >
+          <MenuList>
+            <NavLink to={ROUTES.HOME} style={{ textDecoration: "none" }}>
+              <MenuItem selected={activeRoute(ROUTES.HOME)}>
+                <ListItemText primary="HOME" />
+              </MenuItem>
+            </NavLink>
+            <NavLink to={ROUTES.ACCOUNT} style={{ textDecoration: "none" }}>
+              <MenuItem selected={activeRoute(ROUTES.ACCOUNT)}>
+                <ListItemText primary="ACCOUNT" />
+              </MenuItem>
+            </NavLink>
+            <AuthUserContext.Consumer>
+              {(authUser) =>
+                authUser && authUser.roles[ROLES.ADMIN] ? (
+                  <NavLink to={ROUTES.ADMIN} style={{ textDecoration: "none" }}>
+                    <MenuItem selected={activeRoute(ROUTES.ADMIN)}>
+                      <ListItemText primary="ADMIN" />
+                    </MenuItem>
+                  </NavLink>
+                ) : (
+                  <></>
+                )
+              }
+            </AuthUserContext.Consumer>
+          </MenuList>
+        </div>
+      </Drawer>
     </>
   );
 };
 
-const NavigationNonAuth = () => {
-  const classes = useStyles();
-  return (
-    <>
-      <ListItem button>
-        <Link to={ROUTES.LANDING} className={classes.linkText}>
-          Landing
-        </Link>
-      </ListItem>
-      <ListItem button>
-        <Link to={ROUTES.SIGN_IN} className={classes.linkText}>
-          Sign In
-        </Link>
-      </ListItem>
-      <ListItem button>
-        <Link to={ROUTES.SIGN_UP} className={classes.linkText}>
-          Sign Up
-        </Link>
-      </ListItem>
-    </>
-  );
-};
-
-export default Navigation;
+export default withRouter(Navigation);
