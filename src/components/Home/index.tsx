@@ -28,6 +28,7 @@ const Messages: React.FC = (props: any) => {
   const [messages, setMessages] = useState<Message[] | null>([]);
   const [text, setText] = useState("");
   const firebase = useContext(FirebaseContext);
+  const authUser = useContext(AuthUserContext);
 
   useEffect(() => {
     setLoading(true);
@@ -82,33 +83,29 @@ const Messages: React.FC = (props: any) => {
   };
 
   return (
-    <AuthUserContext.Consumer>
-      {(authUser) => (
-        <div>
-          {loading && <div>Loading ...</div>}
+    <div>
+      {loading && <div>Loading ...</div>}
 
-          {messages ? (
-            <MessageList
-              authUser={authUser}
-              messages={messages}
-              onRemoveMessage={onRemoveMessage}
-              onEditMessage={onEditMessage}
-            />
-          ) : (
-            <div>There are no messages ...</div>
-          )}
-
-          <form onSubmit={(event) => onCreateMessage(event, authUser)}>
-            <input
-              type="text"
-              value={text}
-              onChange={(e) => setText(e.currentTarget.value)}
-            />
-            <button type="submit">Send</button>
-          </form>
-        </div>
+      {messages ? (
+        <MessageList
+          authUser={authUser}
+          messages={messages}
+          onRemoveMessage={onRemoveMessage}
+          onEditMessage={onEditMessage}
+        />
+      ) : (
+        <div>There are no messages ...</div>
       )}
-    </AuthUserContext.Consumer>
+
+      <form onSubmit={(event) => onCreateMessage(event, authUser)}>
+        <input
+          type="text"
+          value={text}
+          onChange={(e) => setText(e.currentTarget.value)}
+        />
+        <button type="submit">Send</button>
+      </form>
+    </div>
   );
 };
 

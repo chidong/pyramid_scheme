@@ -10,6 +10,7 @@ const withAuthorization = (condition: (authUser: any) => boolean) => (
 ) => {
   const WithAuthorization = (props: any) => {
     const firebase = useContext(FirebaseContext);
+    const authUser = useContext(AuthUserContext);
 
     useEffect(() => {
       const listener = firebase.onAuthUserListener(
@@ -26,11 +27,7 @@ const withAuthorization = (condition: (authUser: any) => boolean) => (
       };
     });
 
-    return (
-      <AuthUserContext.Consumer>
-        {(authUser) => (condition(authUser) ? <Component {...props} /> : null)}
-      </AuthUserContext.Consumer>
-    );
+    return condition(authUser) ? <Component {...props} /> : null;
   };
 
   return compose(withRouter)(WithAuthorization);

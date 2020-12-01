@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useContext } from "react";
 import { NavLink, withRouter } from "react-router-dom";
 import SignOutButton from "../SignOut";
 import * as ROUTES from "../../constants/routes";
@@ -41,6 +41,7 @@ const useStyles = makeStyles((theme: Theme) =>
 const Navigation: React.FC = (props: any) => {
   const classes = useStyles();
   const [isOpen, setIsOpen] = useState(false);
+  const authUser = useContext(AuthUserContext);
 
   const toggleDrawer = (open: boolean) => (
     event: React.KeyboardEvent | React.MouseEvent
@@ -103,19 +104,15 @@ const Navigation: React.FC = (props: any) => {
                 <ListItemText primary="ACCOUNT" />
               </MenuItem>
             </NavLink>
-            <AuthUserContext.Consumer>
-              {(authUser) =>
-                authUser && authUser.roles[ROLES.ADMIN] ? (
-                  <NavLink to={ROUTES.ADMIN} style={{ textDecoration: "none" }}>
-                    <MenuItem selected={activeRoute(ROUTES.ADMIN)}>
-                      <ListItemText primary="ADMIN" />
-                    </MenuItem>
-                  </NavLink>
-                ) : (
-                  <></>
-                )
-              }
-            </AuthUserContext.Consumer>
+            {authUser && authUser.roles[ROLES.ADMIN] ? (
+              <NavLink to={ROUTES.ADMIN} style={{ textDecoration: "none" }}>
+                <MenuItem selected={activeRoute(ROUTES.ADMIN)}>
+                  <ListItemText primary="ADMIN" />
+                </MenuItem>
+              </NavLink>
+            ) : (
+              <></>
+            )}
           </MenuList>
         </div>
       </Drawer>
