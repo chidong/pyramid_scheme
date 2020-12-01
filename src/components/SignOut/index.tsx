@@ -1,13 +1,14 @@
 import React, { useContext } from "react";
 import { FirebaseContext } from "../Firebase";
+import { Button } from "@material-ui/core";
 
-const SignOutButton = (props: any) => {
+const SignOutButton = () => {
   const firebase = useContext(FirebaseContext);
 
   return (
-    <button type="button" onClick={firebase.doSignOut}>
+    <Button variant="contained" color="secondary" onClick={firebase.doSignOut}>
       Sign Out
-    </button>
+    </Button>
   );
 };
 export default SignOutButton;

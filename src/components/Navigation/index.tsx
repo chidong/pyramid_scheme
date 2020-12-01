@@ -1,11 +1,12 @@
 import React, { useState, useContext } from "react";
-import { NavLink, withRouter } from "react-router-dom";
+import { NavLink, withRouter, Link } from "react-router-dom";
 import SignOutButton from "../SignOut";
 import * as ROUTES from "../../constants/routes";
 import { AuthUserContext } from "../Session";
 import * as ROLES from "../../constants/roles";
 import {
   AppBar,
+  Button,
   Toolbar,
   Typography,
   IconButton,
@@ -13,6 +14,7 @@ import {
   MenuList,
   MenuItem,
   ListItemText,
+  Grid,
 } from "@material-ui/core";
 import { createStyles, makeStyles, Theme } from "@material-ui/core/styles";
 import MenuIcon from "@material-ui/icons/Menu";
@@ -75,9 +77,38 @@ const Navigation: React.FC = (props: any) => {
             >
               <MenuIcon />
             </IconButton>
+
             <Typography variant="h6" className={classes.title}>
               Pyramid
             </Typography>
+
+            {authUser ? (
+              <SignOutButton />
+            ) : (
+              <Grid container justify="flex-end" spacing={2}>
+                <Grid item>
+                  <Button
+                    variant="contained"
+                    color="secondary"
+                    component={Link}
+                    to={ROUTES.SIGN_IN}
+                  >
+                    Sign In
+                  </Button>
+                </Grid>
+
+                <Grid item>
+                  <Button
+                    variant="contained"
+                    color="secondary"
+                    component={Link}
+                    to={ROUTES.SIGN_UP}
+                  >
+                    Sign Up
+                  </Button>
+                </Grid>
+              </Grid>
+            )}
           </Toolbar>
         </AppBar>
         <div className={classes.toolbarMargin} />
@@ -94,25 +125,45 @@ const Navigation: React.FC = (props: any) => {
           onKeyDown={toggleDrawer(false)}
         >
           <MenuList>
-            <NavLink to={ROUTES.HOME} style={{ textDecoration: "none" }}>
-              <MenuItem selected={activeRoute(ROUTES.HOME)}>
-                <ListItemText primary="HOME" />
-              </MenuItem>
-            </NavLink>
-            <NavLink to={ROUTES.ACCOUNT} style={{ textDecoration: "none" }}>
-              <MenuItem selected={activeRoute(ROUTES.ACCOUNT)}>
-                <ListItemText primary="ACCOUNT" />
-              </MenuItem>
-            </NavLink>
-            {authUser && authUser.roles[ROLES.ADMIN] ? (
+            {!authUser && (
+              <NavLink to={ROUTES.LANDING} style={{ textDecoration: "none" }}>
+                <MenuItem selected={activeRoute(ROUTES.LANDING)}>
+                  <ListItemText primary="HOME" />
+                </MenuItem>
+              </NavLink>
+            )}
+            {authUser && (
+              <div>
+                <NavLink to={ROUTES.HOME} style={{ textDecoration: "none" }}>
+                  <MenuItem selected={activeRoute(ROUTES.HOME)}>
+                    <ListItemText primary="HOME" />
+                  </MenuItem>
+                </NavLink>
+                <NavLink to={ROUTES.ACCOUNT} style={{ textDecoration: "none" }}>
+                  <MenuItem selected={activeRoute(ROUTES.ACCOUNT)}>
+                    <ListItemText primary="ACCOUNT" />
+                  </MenuItem>
+                </NavLink>
+              </div>
+            )}
+
+            {authUser && authUser.roles[ROLES.ADMIN] && (
               <NavLink to={ROUTES.ADMIN} style={{ textDecoration: "none" }}>
                 <MenuItem selected={activeRoute(ROUTES.ADMIN)}>
                   <ListItemText primary="ADMIN" />
                 </MenuItem>
               </NavLink>
-            ) : (
-              <></>
             )}
+            <NavLink to={ROUTES.CONTACT} style={{ textDecoration: "none" }}>
+              <MenuItem selected={activeRoute(ROUTES.CONTACT)}>
+                <ListItemText primary="CONTACT" />
+              </MenuItem>
+            </NavLink>
+            <NavLink to={ROUTES.ABOUT} style={{ textDecoration: "none" }}>
+              <MenuItem selected={activeRoute(ROUTES.ABOUT)}>
+                <ListItemText primary="ABOUT" />
+              </MenuItem>
+            </NavLink>
           </MenuList>
         </div>
       </Drawer>

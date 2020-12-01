@@ -9,6 +9,8 @@ import PasswordForgetPage from "../PasswordForget";
 import HomePage from "../Home";
 import AccountPage from "../Account";
 import AdminPage from "../Admin";
+import Contact from "../Contact";
+import About from "../About";
 import { Grid } from "@material-ui/core";
 
 import * as ROUTES from "../../constants/routes";
@@ -36,6 +38,8 @@ const App = () => (
             <Route exact path={ROUTES.HOME} component={HomePage} />
             <Route exact path={ROUTES.ACCOUNT} component={AccountPage} />
             <Route exact path={ROUTES.ADMIN} component={AdminPage} />
+            <Route exact path={ROUTES.CONTACT} component={Contact} />
+            <Route exact path={ROUTES.ABOUT} component={About} />
             <Redirect from="*" to="/" />
           </Switch>
         </Grid>
