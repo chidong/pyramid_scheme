@@ -1,10 +1,9 @@
-import React, { useState } from "react";
+import React, { useState, useContext } from "react";
 import { Link, withRouter } from "react-router-dom";
-
-import { withFirebase } from "../Firebase";
 import * as ROUTES from "../../constants/routes";
 import * as ROLES from "../../constants/roles";
 import { compose } from "recompose";
+import { FirebaseContext } from "../Firebase";
 
 const SignUpPage = () => (
   <div>
@@ -20,6 +19,7 @@ const SignUpFormBase = (props: any) => {
   const [passwordTwo, setPasswordTwo] = useState("");
   const [isAdmin, setIsAdmin] = useState(false);
   const [error, setError] = useState(null);
+  const firebase = useContext(FirebaseContext);
 
   const onSubmit = (event: React.FormEvent) => {
     const roles: any = {};
@@ -27,18 +27,18 @@ const SignUpFormBase = (props: any) => {
       roles[ROLES.ADMIN] = ROLES.ADMIN;
     }
 
-    props.firebase
+    firebase
       .doCreateUserWithEmailAndPassword(email, passwordOne)
       .then((authUser: any) => {
         // Create a user in your Firebase realtime database
-        return props.firebase.user(authUser.user.uid).set({
+        return firebase.user(authUser.user.uid).set({
           username,
           email,
           roles,
         });
       })
       .then(() => {
-        return props.firebase.doSendEmailVerification();
+        return firebase.doSendEmailVerification();
       })
       .then(() => {
         setUsername("");
@@ -116,7 +116,7 @@ const SignUpLink = () => (
   </p>
 );
 
-const SignUpForm = compose(withRouter, withFirebase)(SignUpFormBase);
+const SignUpForm = compose(withRouter)(SignUpFormBase);
 
 export default SignUpPage;
 

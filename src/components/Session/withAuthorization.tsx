@@ -1,7 +1,7 @@
-import React, { useEffect } from "react";
+import React, { useContext, useEffect } from "react";
 import { withRouter } from "react-router-dom";
 import { compose } from "recompose";
-import { withFirebase } from "../Firebase";
+import { FirebaseContext } from "../Firebase";
 import AuthUserContext from "./context";
 import * as ROUTES from "../../constants/routes";
 
@@ -9,8 +9,10 @@ const withAuthorization = (condition: (authUser: any) => boolean) => (
   Component: React.FC
 ) => {
   const WithAuthorization = (props: any) => {
+    const firebase = useContext(FirebaseContext);
+
     useEffect(() => {
-      const listener = props.firebase.onAuthUserListener(
+      const listener = firebase.onAuthUserListener(
         (authUser: any) => {
           if (!condition(authUser)) {
             props.history.push(ROUTES.SIGN_IN);
@@ -31,7 +33,7 @@ const withAuthorization = (condition: (authUser: any) => boolean) => (
     );
   };
 
-  return compose(withRouter, withFirebase)(WithAuthorization);
+  return compose(withRouter)(WithAuthorization);
 };
 
 export default withAuthorization;

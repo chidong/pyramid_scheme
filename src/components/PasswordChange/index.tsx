@@ -1,14 +1,14 @@
-import React, { useState } from "react";
-
-import { withFirebase } from "../Firebase";
+import React, { useContext, useState } from "react";
+import { FirebaseContext } from "../Firebase";
 
 const PasswordChangeForm = (props: any) => {
   const [passwordOne, setPasswordOne] = useState("");
   const [passwordTwo, setPasswordTwo] = useState("");
   const [error, setError] = useState(null);
+  const firebase = useContext(FirebaseContext);
 
   const onSubmit = (event: React.FormEvent) => {
-    props.firebase
+    firebase
       .doPasswordUpdate(passwordOne)
       .then(() => {
         setPasswordOne("");
@@ -49,4 +49,4 @@ const PasswordChangeForm = (props: any) => {
   );
 };
 
-export default withFirebase(PasswordChangeForm);
+export default PasswordChangeForm;

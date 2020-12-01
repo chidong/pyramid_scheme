@@ -1,6 +1,6 @@
-import React, { useState } from "react";
+import React, { useContext, useState } from "react";
 import AuthUserContext from "./context";
-import { withFirebase } from "../Firebase";
+import { FirebaseContext } from "../Firebase";
 
 const needsEmailVerification = (authUser: any) =>
   authUser &&
@@ -12,9 +12,10 @@ const needsEmailVerification = (authUser: any) =>
 const withEmailVerification = (Component: React.FunctionComponent) => {
   const WithEmailVerification = (props: any) => {
     const [isSent, setIsSent] = useState(false);
+    const firebase = useContext(FirebaseContext);
 
     const onSendEmailVerification = () => {
-      props.firebase.doSendEmailVerification().then(() => setIsSent(true));
+      firebase.doSendEmailVerification().then(() => setIsSent(true));
     };
 
     return (
@@ -50,7 +51,7 @@ const withEmailVerification = (Component: React.FunctionComponent) => {
       </AuthUserContext.Consumer>
     );
   };
-  return withFirebase(WithEmailVerification);
+  return WithEmailVerification;
 };
 
 export default withEmailVerification;

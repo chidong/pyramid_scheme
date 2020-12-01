@@ -1,16 +1,17 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useContext } from "react";
 
 import AuthUserContext from "./context";
-import { withFirebase } from "../Firebase";
+import { FirebaseContext } from "../Firebase";
 
 const withAuthentication = (Component: React.FunctionComponent) => {
   const WithAuthentication = (props: any) => {
     const [authUser, setAuthUser] = useState(
       JSON.parse(localStorage.getItem("authUser") as string)
     );
+    const firebase = useContext(FirebaseContext);
 
     useEffect(() => {
-      const listener = props.firebase.onAuthUserListener(
+      const listener = firebase.onAuthUserListener(
         (authUser: any) => {
           localStorage.setItem("authUser", JSON.stringify(authUser));
           setAuthUser(authUser);
@@ -33,7 +34,7 @@ const withAuthentication = (Component: React.FunctionComponent) => {
     );
   };
 
-  return withFirebase(WithAuthentication);
+  return WithAuthentication;
 };
 
 export default withAuthentication;

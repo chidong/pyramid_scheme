@@ -1,10 +1,9 @@
-import React, { useState } from "react";
+import React, { useContext, useState } from "react";
 import { withRouter } from "react-router-dom";
 import { compose } from "recompose";
-
 import { SignUpLink } from "../SignUp";
 import { PasswordForgetLink } from "../PasswordForget";
-import { withFirebase } from "../Firebase";
+import { FirebaseContext } from "../Firebase";
 import * as ROUTES from "../../constants/routes";
 
 const SignInPage = () => (
@@ -21,9 +20,10 @@ const SignInFormBase = (props: any) => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState(null);
+  const firebase = useContext(FirebaseContext);
 
   const onSubmit = (event: React.FormEvent) => {
-    props.firebase
+    firebase
       .doSignInWithEmailAndPassword(email, password)
       .then(() => {
         setEmail("");
@@ -67,14 +67,15 @@ const SignInFormBase = (props: any) => {
 
 const SignInGoogleBase = (props: any) => {
   const [error, setError] = useState(null);
+  const firebase = useContext(FirebaseContext);
 
   const onSubmit = (event: React.FormEvent) => {
-    props.firebase
+    firebase
       .doSignInWithGoogle()
       .then((socialAuthUser: any) => {
         // Create a user in your Firebase Realtime Database too
         if (socialAuthUser.additionalUserInfo.isNewUser) {
-          return props.firebase.user(socialAuthUser.user.uid).set({
+          return firebase.user(socialAuthUser.user.uid).set({
             username: socialAuthUser.user.displayName,
             email: socialAuthUser.user.email,
             roles: {},
@@ -99,9 +100,9 @@ const SignInGoogleBase = (props: any) => {
   );
 };
 
-const SignInForm = compose(withRouter, withFirebase)(SignInFormBase);
+const SignInForm = compose(withRouter)(SignInFormBase);
 
-const SignInGoogle = compose(withRouter, withFirebase)(SignInGoogleBase);
+const SignInGoogle = compose(withRouter)(SignInGoogleBase);
 
 export default SignInPage;
 

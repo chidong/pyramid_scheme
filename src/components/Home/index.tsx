@@ -1,11 +1,11 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import { compose } from "recompose";
 import {
   AuthUserContext,
   withAuthorization,
   withEmailVerification,
 } from "../Session";
-import { withFirebase } from "../Firebase";
+import { FirebaseContext } from "../Firebase";
 
 const Home = () => (
   <div>
@@ -23,15 +23,16 @@ interface Message {
   editedAt?: Date;
 }
 
-const MessagesBase: React.FC = (props: any) => {
+const Messages: React.FC = (props: any) => {
   const [loading, setLoading] = useState(false);
   const [messages, setMessages] = useState<Message[] | null>([]);
   const [text, setText] = useState("");
+  const firebase = useContext(FirebaseContext);
 
   useEffect(() => {
     setLoading(true);
 
-    props.firebase
+    firebase
       .messages()
       .orderByChild("createdAt")
       .on("value", (snapshot: any) => {
@@ -51,15 +52,15 @@ const MessagesBase: React.FC = (props: any) => {
       });
 
     return () => {
-      props.firebase.messages().off();
+      firebase.messages().off();
     };
-  }, [props.firebase]);
+  }, [firebase]);
 
   const onCreateMessage = (event: React.FormEvent, authUser: any) => {
-    props.firebase.messages().push({
+    firebase.messages().push({
       text: text,
       userId: authUser.uid,
-      createdAt: props.firebase.serverValue.TIMESTAMP,
+      createdAt: firebase.serverValue.TIMESTAMP,
     });
 
     setText("");
@@ -68,14 +69,14 @@ const MessagesBase: React.FC = (props: any) => {
   };
 
   const onRemoveMessage = (uid: string) => {
-    props.firebase.message(uid).remove();
+    firebase.message(uid).remove();
   };
 
   const onEditMessage = (message: Message, text: string) => {
-    props.firebase.message(message.uid).set({
+    firebase.message(message.uid).set({
       ...message,
       text,
-      editedAt: props.firebase.serverValue.TIMESTAMP,
+      editedAt: firebase.serverValue.TIMESTAMP,
       uid: null,
     });
   };
@@ -85,6 +86,7 @@ const MessagesBase: React.FC = (props: any) => {
       {(authUser) => (
         <div>
           {loading && <div>Loading ...</div>}
+
           {messages ? (
             <MessageList
               authUser={authUser}
@@ -175,8 +177,6 @@ const MessageItem = (props: any) => {
     </li>
   );
 };
-
-const Messages = withFirebase(MessagesBase);
 
 const condition = (authUser: any) => !!authUser;
 export default compose(
