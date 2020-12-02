@@ -19,7 +19,7 @@ const PasswordForgetForm = (props: any) => {
 
   const onSubmit = (event: React.FormEvent) => {
     firebase
-      .doPasswordReset(email)
+      ?.doPasswordReset(email)
       .then(() => {
         setEmail("");
 

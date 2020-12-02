@@ -28,7 +28,7 @@ const SignUpFormBase = (props: any) => {
     }
 
     firebase
-      .doCreateUserWithEmailAndPassword(email, passwordOne)
+      ?.doCreateUserWithEmailAndPassword(email, passwordOne)
       .then((authUser: any) => {
         // Create a user in your Firebase realtime database
         return firebase.user(authUser.user.uid).set({

@@ -16,7 +16,7 @@ const withEmailVerification = (Component: React.FunctionComponent) => {
     const authUser = useContext(AuthUserContext);
 
     const onSendEmailVerification = () => {
-      firebase.doSendEmailVerification().then(() => setIsSent(true));
+      firebase?.doSendEmailVerification().then(() => setIsSent(true));
     };
 
     return needsEmailVerification(authUser) ? (

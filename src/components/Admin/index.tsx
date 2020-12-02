@@ -7,7 +7,7 @@ import { FirebaseContext } from "../Firebase";
 
 const Admin = () => {
   const firebase = useContext(FirebaseContext);
-  const [users, loading, error] = useList(firebase.db.ref("users"));
+  const [users, loading, error] = useList(firebase?.db.ref("users"));
 
   return (
     <div>

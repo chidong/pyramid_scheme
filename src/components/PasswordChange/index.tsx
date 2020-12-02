@@ -9,7 +9,7 @@ const PasswordChangeForm = (props: any) => {
 
   const onSubmit = (event: React.FormEvent) => {
     firebase
-      .doPasswordUpdate(passwordOne)
+      ?.doPasswordUpdate(passwordOne)
       .then(() => {
         setPasswordOne("");
         setPasswordTwo("");

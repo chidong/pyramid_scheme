@@ -34,7 +34,7 @@ const Messages: React.FC = (props: any) => {
     setLoading(true);
 
     firebase
-      .messages()
+      ?.messages()
       .orderByChild("createdAt")
       .on("value", (snapshot: any) => {
         // convert messages list from snapshot
@@ -53,12 +53,12 @@ const Messages: React.FC = (props: any) => {
       });
 
     return () => {
-      firebase.messages().off();
+      firebase?.messages().off();
     };
   }, [firebase]);
 
   const onCreateMessage = (event: React.FormEvent, authUser: any) => {
-    firebase.messages().push({
+    firebase?.messages().push({
       text: text,
       userId: authUser.uid,
       createdAt: firebase.serverValue.TIMESTAMP,
@@ -70,11 +70,11 @@ const Messages: React.FC = (props: any) => {
   };
 
   const onRemoveMessage = (uid: string) => {
-    firebase.message(uid).remove();
+    firebase?.message(uid).remove();
   };
 
   const onEditMessage = (message: Message, text: string) => {
-    firebase.message(message.uid).set({
+    firebase?.message(message.uid).set({
       ...message,
       text,
       editedAt: firebase.serverValue.TIMESTAMP,

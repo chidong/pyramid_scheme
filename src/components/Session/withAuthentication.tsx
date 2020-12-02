@@ -11,7 +11,7 @@ const withAuthentication = (Component: React.FunctionComponent) => {
     const firebase = useContext(FirebaseContext);
 
     useEffect(() => {
-      const listener = firebase.onAuthUserListener(
+      const listener = firebase?.onAuthUserListener(
         (authUser: any) => {
           localStorage.setItem("authUser", JSON.stringify(authUser));
           setAuthUser(authUser);
@@ -23,7 +23,9 @@ const withAuthentication = (Component: React.FunctionComponent) => {
       );
 
       return () => {
-        listener();
+        if (listener) {
+          listener();
+        }
       };
     });
 

@@ -24,7 +24,7 @@ const SignInFormBase = (props: any) => {
 
   const onSubmit = (event: React.FormEvent) => {
     firebase
-      .doSignInWithEmailAndPassword(email, password)
+      ?.doSignInWithEmailAndPassword(email, password)
       .then(() => {
         setEmail("");
         setPassword("");
@@ -71,7 +71,7 @@ const SignInGoogleBase = (props: any) => {
 
   const onSubmit = (event: React.FormEvent) => {
     firebase
-      .doSignInWithGoogle()
+      ?.doSignInWithGoogle()
       .then((socialAuthUser: any) => {
         // Create a user in your Firebase Realtime Database too
         if (socialAuthUser.additionalUserInfo.isNewUser) {

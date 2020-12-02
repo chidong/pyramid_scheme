@@ -13,7 +13,7 @@ const withAuthorization = (condition: (authUser: any) => boolean) => (
     const authUser = useContext(AuthUserContext);
 
     useEffect(() => {
-      const listener = firebase.onAuthUserListener(
+      const listener = firebase?.onAuthUserListener(
         (authUser: any) => {
           if (!condition(authUser)) {
             props.history.push(ROUTES.SIGN_IN);
@@ -23,7 +23,9 @@ const withAuthorization = (condition: (authUser: any) => boolean) => (
       );
 
       return () => {
-        listener();
+        if (listener) {
+          listener();
+        }
       };
     });
 
