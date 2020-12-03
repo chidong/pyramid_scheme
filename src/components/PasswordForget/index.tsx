@@ -68,7 +68,7 @@ const PasswordForgetForm = () => {
               disabled={!dirty || !isValid || isSubmitting}
               onClick={submitForm}
             >
-              Reset Password
+              Send Password Link
             </Button>
 
             {error && <p>{(error as any).message}</p>}

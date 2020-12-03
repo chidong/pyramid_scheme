@@ -5,11 +5,31 @@ import { SignUpLink } from "../SignUp";
 import { PasswordForgetLink } from "../PasswordForget";
 import { FirebaseContext } from "../Firebase";
 import * as ROUTES from "../../constants/routes";
+import { Formik, Form, Field } from "formik";
+import * as Yup from "yup";
+import { TextField } from "formik-material-ui";
+import { Button, LinearProgress } from "@material-ui/core";
+
+interface SignInProps {
+  email: string;
+  password: string;
+}
+
+const initialValues: SignInProps = {
+  email: "",
+  password: "",
+};
+
+const SignInSchema = Yup.object().shape({
+  email: Yup.string().required("required").email(),
+  password: Yup.string().required("required"),
+});
 
 const SignInPage = () => (
   <div>
     <h1>SignIn</h1>
     <SignInForm />
+    <br />
     <SignInGoogle />
     <PasswordForgetLink />
     <SignUpLink />
@@ -17,51 +37,63 @@ const SignInPage = () => (
 );
 
 const SignInFormBase = (props: any) => {
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
   const [error, setError] = useState(null);
   const firebase = useContext(FirebaseContext);
 
-  const onSubmit = (event: React.FormEvent) => {
+  const handleSubmit = (values: SignInProps, actions: any): void => {
     firebase
-      ?.doSignInWithEmailAndPassword(email, password)
+      ?.doSignInWithEmailAndPassword(values.email, values.password)
       .then(() => {
-        setEmail("");
-        setPassword("");
         setError(null);
         props.history.push(ROUTES.HOME);
       })
       .catch((error: any) => {
         setError(error);
       });
-
-    event.preventDefault();
+    actions.setSubmitting(false);
+    actions.resetForm();
   };
 
-  const isInvalid = password === "" || email === "";
-
   return (
-    <form onSubmit={onSubmit}>
-      <input
-        name="email"
-        value={email}
-        onChange={(e) => setEmail(e.currentTarget.value)}
-        type="text"
-        placeholder="Email Address"
-      />
-      <input
-        name="password"
-        value={password}
-        onChange={(e) => setPassword(e.currentTarget.value)}
-        type="password"
-        placeholder="Password"
-      />
-      <button disabled={isInvalid} type="submit">
-        Sign In
-      </button>
+    <Formik
+      initialValues={initialValues}
+      onSubmit={handleSubmit}
+      validationSchema={SignInSchema}
+    >
+      {({ dirty, isValid, isSubmitting, submitForm }) => {
+        return (
+          <Form>
+            <Field
+              component={TextField}
+              name="email"
+              type="email"
+              label="Email"
+            />
+            <br />
+            <Field
+              component={TextField}
+              type="password"
+              label="Password"
+              name="password"
+            />
+            <br />
+            {isSubmitting && <LinearProgress />}
 
-      {error && <p>{(error as any).message}</p>}
-    </form>
+            <br />
+            <Button
+              variant="contained"
+              color="primary"
+              disabled={!dirty || !isValid || isSubmitting}
+              onClick={submitForm}
+            >
+              Sign In
+            </Button>
+
+            {error && <p>{(error as any).message}</p>}
+          </Form>
+        );
+      }}
+    </Formik>
   );
 };
 

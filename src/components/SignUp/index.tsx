@@ -129,7 +129,7 @@ const SignUpFormBase = (props: any) => {
               disabled={!dirty || !isValid || isSubmitting}
               onClick={submitForm}
             >
-              Submit
+              Sign Up
             </Button>
 
             {error && <p>{(error as any).message}</p>}
