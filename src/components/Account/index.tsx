@@ -6,7 +6,6 @@ import {
   withEmailVerification,
 } from "../Session";
 
-import { PasswordForgetForm } from "../PasswordForget";
 import PasswordChangeForm from "../PasswordChange";
 import { AuthUser } from "../Session/withAuthentication";
 
@@ -16,7 +15,7 @@ const AccountPage = () => {
   return (
     <div>
       <h1>Account: {authUser?.email}</h1>
-      <PasswordForgetForm />
+      <h2>Reset Password</h2>
       <PasswordChangeForm />
     </div>
   );

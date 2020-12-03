@@ -16,7 +16,7 @@ const SignUpPage = () => (
   </div>
 );
 
-interface ISignUp {
+interface SignUpProps {
   email: string;
   username: string;
   passwordOne: string;
@@ -24,7 +24,7 @@ interface ISignUp {
   isAdmin: boolean;
 }
 
-const initialValues: ISignUp = {
+const initialValues: SignUpProps = {
   email: "",
   username: "",
   passwordOne: "",
@@ -36,7 +36,10 @@ const SignUpSchema = Yup.object().shape({
   username: Yup.string().min(4, "min 4 characters").required("required"),
   email: Yup.string().required("required").email(),
   passwordOne: Yup.string().min(6, "min 6 characters").required("required"),
-  passwordTwo: Yup.string().min(6, "min 6 characters").required("required"),
+  passwordTwo: Yup.string()
+    .min(6, "min 6 characters")
+    .required("required")
+    .oneOf([Yup.ref("passwordOne")], "passwords have to match"),
   isAdmin: Yup.bool(),
 });
 
@@ -44,7 +47,7 @@ const SignUpFormBase = (props: any) => {
   const [error, setError] = useState(null);
   const firebase = useContext(FirebaseContext);
 
-  const handleSubmit = (values: ISignUp, actions: any): void => {
+  const handleSubmit = (values: SignUpProps, actions: any): void => {
     const roles: any = {};
     if (values.isAdmin) {
       roles[ROLES.ADMIN] = ROLES.ADMIN;
@@ -69,9 +72,9 @@ const SignUpFormBase = (props: any) => {
       })
       .catch((error: any) => {
         setError(error);
-        actions.setSubmitting(false);
       });
     actions.setSubmitting(false);
+    actions.resetForm();
   };
 
   return (
