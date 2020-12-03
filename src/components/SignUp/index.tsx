@@ -4,6 +4,10 @@ import * as ROUTES from "../../constants/routes";
 import * as ROLES from "../../constants/roles";
 import { compose } from "recompose";
 import { FirebaseContext } from "../Firebase";
+import { Formik, Form, Field } from "formik";
+import * as Yup from "yup";
+import { TextField, CheckboxWithLabel } from "formik-material-ui";
+import { Button, LinearProgress } from "@material-ui/core";
 
 const SignUpPage = () => (
   <div>
@@ -12,28 +16,47 @@ const SignUpPage = () => (
   </div>
 );
 
+interface ISignUp {
+  email: string;
+  username: string;
+  passwordOne: string;
+  passwordTwo: string;
+  isAdmin: boolean;
+}
+
+const initialValues: ISignUp = {
+  email: "",
+  username: "",
+  passwordOne: "",
+  passwordTwo: "",
+  isAdmin: false,
+};
+
+const SignUpSchema = Yup.object().shape({
+  username: Yup.string().min(4, "min 4 characters").required("required"),
+  email: Yup.string().required("required").email(),
+  passwordOne: Yup.string().min(6, "min 6 characters").required("required"),
+  passwordTwo: Yup.string().min(6, "min 6 characters").required("required"),
+  isAdmin: Yup.bool(),
+});
+
 const SignUpFormBase = (props: any) => {
-  const [username, setUsername] = useState("");
-  const [email, setEmail] = useState("");
-  const [passwordOne, setPasswordOne] = useState("");
-  const [passwordTwo, setPasswordTwo] = useState("");
-  const [isAdmin, setIsAdmin] = useState(false);
   const [error, setError] = useState(null);
   const firebase = useContext(FirebaseContext);
 
-  const onSubmit = (event: React.FormEvent) => {
+  const handleSubmit = (values: ISignUp, actions: any): void => {
     const roles: any = {};
-    if (isAdmin) {
+    if (values.isAdmin) {
       roles[ROLES.ADMIN] = ROLES.ADMIN;
     }
 
     firebase
-      ?.doCreateUserWithEmailAndPassword(email, passwordOne)
+      ?.doCreateUserWithEmailAndPassword(values.email, values.passwordOne)
       .then((authUser: any) => {
         // Create a user in your Firebase realtime database
         return firebase.user(authUser.user.uid).set({
-          username,
-          email,
+          username: values.username,
+          email: values.email,
           roles,
         });
       })
@@ -41,72 +64,76 @@ const SignUpFormBase = (props: any) => {
         return firebase.doSendEmailVerification();
       })
       .then(() => {
-        setUsername("");
-        setEmail("");
-        setPasswordOne("");
-        setPasswordTwo("");
-        setIsAdmin(false);
         setError(null);
         props.history.push(ROUTES.HOME);
       })
       .catch((error: any) => {
         setError(error);
+        actions.setSubmitting(false);
       });
-
-    event.preventDefault();
+    actions.setSubmitting(false);
   };
 
-  const isInvalid =
-    passwordOne !== passwordTwo ||
-    passwordOne === "" ||
-    email === "" ||
-    username === "";
-
   return (
-    <form onSubmit={onSubmit}>
-      <input
-        name="username"
-        value={username}
-        onChange={(e) => setUsername(e.currentTarget.value)}
-        type="text"
-        placeholder="Full Name"
-      />
-      <input
-        name="email"
-        value={email}
-        onChange={(e) => setEmail(e.currentTarget.value)}
-        type="text"
-        placeholder="Email Address"
-      />
-      <input
-        name="passwordOne"
-        value={passwordOne}
-        onChange={(e) => setPasswordOne(e.currentTarget.value)}
-        type="password"
-        placeholder="Password"
-      />
-      <input
-        name="passwordTwo"
-        value={passwordTwo}
-        onChange={(e) => setPasswordTwo(e.currentTarget.value)}
-        type="password"
-        placeholder="Confirm Password"
-      />
-      <label>
-        Admin:
-        <input
-          name="isAdmin"
-          type="checkbox"
-          checked={isAdmin}
-          onChange={(e) => setIsAdmin(e.currentTarget.checked)}
-        />
-      </label>
-      <button disabled={isInvalid} type="submit">
-        Sign Up
-      </button>
+    <Formik
+      initialValues={initialValues}
+      onSubmit={handleSubmit}
+      validationSchema={SignUpSchema}
+    >
+      {({ dirty, isValid, isSubmitting, submitForm }) => {
+        return (
+          <Form>
+            <Field
+              component={TextField}
+              name="username"
+              type="text"
+              label="Username"
+            />
+            <br />
+            <Field
+              component={TextField}
+              name="email"
+              type="email"
+              label="Email"
+            />
+            <br />
+            <Field
+              component={TextField}
+              type="password"
+              label="Password"
+              name="passwordOne"
+            />
+            <br />
+            <Field
+              component={TextField}
+              type="password"
+              label="Repeat Password"
+              name="passwordTwo"
+            />
+            <br />
+            <Field
+              component={CheckboxWithLabel}
+              type="checkbox"
+              name="isAdmin"
+              Label={{ label: "Admin" }}
+            />
+            {isSubmitting && <LinearProgress />}
 
-      {error && <p>{(error as any).message}</p>}
-    </form>
+            <br />
+            <Button
+              variant="contained"
+              color="primary"
+              disabled={!dirty || !isValid || isSubmitting}
+              onClick={submitForm}
+            >
+              Submit
+            </Button>
+
+            {error && <p>{(error as any).message}</p>}
+          </Form>
+        );
+      }}
+    </Formik>
   );
 };
 
