@@ -8,20 +8,21 @@ import {
 
 import { PasswordForgetForm } from "../PasswordForget";
 import PasswordChangeForm from "../PasswordChange";
+import { AuthUser } from "../Session/withAuthentication";
 
 const AccountPage = () => {
   const authUser = useContext(AuthUserContext);
 
   return (
     <div>
-      <h1>Account: {authUser.email}</h1>
+      <h1>Account: {authUser?.email}</h1>
       <PasswordForgetForm />
       <PasswordChangeForm />
     </div>
   );
 };
 
-const condition = (authUser: any) => !!authUser;
+const condition = (authUser: AuthUser | null) => !!authUser;
 export default compose(
   withEmailVerification,
   withAuthorization(condition)

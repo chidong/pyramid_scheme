@@ -4,6 +4,7 @@ import { withAuthorization, withEmailVerification } from "../Session";
 import * as ROLES from "../../constants/roles";
 import { useList } from "react-firebase-hooks/database";
 import { FirebaseContext } from "../Firebase";
+import { AuthUser } from "../Session/withAuthentication";
 
 const Admin = () => {
   const firebase = useContext(FirebaseContext);
@@ -38,7 +39,8 @@ const UserList = ({ users }: { users: any[] | undefined }) => {
   );
 };
 
-const condition = (authUser: any) => authUser && !!authUser.roles[ROLES.ADMIN];
+const condition = (authUser: AuthUser | null) =>
+  (authUser && !!authUser.roles[ROLES.ADMIN]) as boolean;
 
 export default compose(
   withEmailVerification,

@@ -6,6 +6,7 @@ import {
   withEmailVerification,
 } from "../Session";
 import { FirebaseContext } from "../Firebase";
+import { AuthUser } from "../Session/withAuthentication";
 
 const Home = () => (
   <div>
@@ -57,7 +58,7 @@ const Messages: React.FC = (props: any) => {
     };
   }, [firebase]);
 
-  const onCreateMessage = (event: React.FormEvent, authUser: any) => {
+  const onCreateMessage = (event: React.FormEvent, authUser: AuthUser) => {
     firebase?.messages().push({
       text: text,
       userId: authUser.uid,
@@ -97,7 +98,7 @@ const Messages: React.FC = (props: any) => {
         <div>There are no messages ...</div>
       )}
 
-      <form onSubmit={(event) => onCreateMessage(event, authUser)}>
+      <form onSubmit={(event) => onCreateMessage(event, authUser!)}>
         <input
           type="text"
           value={text}
@@ -175,7 +176,7 @@ const MessageItem = (props: any) => {
   );
 };
 
-const condition = (authUser: any) => !!authUser;
+const condition = (authUser: AuthUser | null) => !!authUser;
 export default compose(
   withEmailVerification,
   withAuthorization(condition)
