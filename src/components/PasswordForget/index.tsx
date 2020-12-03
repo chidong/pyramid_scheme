@@ -1,9 +1,23 @@
 import React, { useContext, useState } from "react";
 import { Link } from "react-router-dom";
-
-//import { withFirebase } from "../Firebase";
 import { FirebaseContext } from "../Firebase";
 import * as ROUTES from "../../constants/routes";
+import { Formik, Form, Field } from "formik";
+import * as Yup from "yup";
+import { TextField } from "formik-material-ui";
+import { Button, LinearProgress } from "@material-ui/core";
+
+interface PasswordForgetProps {
+  email: string;
+}
+
+const initialValues: PasswordForgetProps = {
+  email: "",
+};
+
+const PasswordForgetSchema = Yup.object().shape({
+  email: Yup.string().required("required").email(),
+});
 
 const PasswordForgetPage = () => (
   <div>
@@ -12,43 +26,56 @@ const PasswordForgetPage = () => (
   </div>
 );
 
-const PasswordForgetForm = (props: any) => {
-  const [email, setEmail] = useState("");
+const PasswordForgetForm = () => {
   const [error, setError] = useState(null);
   const firebase = useContext(FirebaseContext);
 
-  const onSubmit = (event: React.FormEvent) => {
+  const handleSubmit = (values: PasswordForgetProps, actions: any): void => {
     firebase
-      ?.doPasswordReset(email)
+      ?.doPasswordReset(values.email)
       .then(() => {
-        setEmail("");
-
         setError(null);
       })
       .catch((error: any) => {
         setError(error);
       });
-
-    event.preventDefault();
+    actions.setSubmitting(false);
+    actions.resetForm();
   };
 
-  const isInvalid = email === "";
-
   return (
-    <form onSubmit={onSubmit}>
-      <input
-        name="email"
-        value={email}
-        onChange={(e) => setEmail(e.currentTarget.value)}
-        type="text"
-        placeholder="Email Address"
-      />
-      <button disabled={isInvalid} type="submit">
-        Reset My Password
-      </button>
+    <Formik
+      initialValues={initialValues}
+      onSubmit={handleSubmit}
+      validationSchema={PasswordForgetSchema}
+    >
+      {({ dirty, isValid, isSubmitting, submitForm }) => {
+        return (
+          <Form>
+            <Field
+              component={TextField}
+              name="email"
+              type="email"
+              label="Email"
+            />
+            <br />
+            {isSubmitting && <LinearProgress />}
 
-      {error && <p>{(error as any).message}</p>}
-    </form>
+            <br />
+            <Button
+              variant="contained"
+              color="primary"
+              disabled={!dirty || !isValid || isSubmitting}
+              onClick={submitForm}
+            >
+              Reset Password
+            </Button>
+
+            {error && <p>{(error as any).message}</p>}
+          </Form>
+        );
+      }}
+    </Formik>
   );
 };
 
