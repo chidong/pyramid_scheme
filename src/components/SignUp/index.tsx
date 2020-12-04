@@ -4,17 +4,26 @@ import * as ROUTES from "../../constants/routes";
 import * as ROLES from "../../constants/roles";
 import { compose } from "recompose";
 import { FirebaseContext } from "../Firebase";
-import { Formik, Form, Field } from "formik";
+import { yupResolver } from "@hookform/resolvers/yup";
 import * as Yup from "yup";
-import { TextField, CheckboxWithLabel } from "formik-material-ui";
-import { Button, LinearProgress } from "@material-ui/core";
+import {
+  Button,
+  Avatar,
+  CssBaseline,
+  TextField,
+  Grid,
+  Typography,
+  Container,
+  FormControlLabel,
+  Checkbox,
+} from "@material-ui/core";
+import { Alert } from "@material-ui/lab";
+import LockOutlinedIcon from "@material-ui/icons/LockOutlined";
+import { useForm, Controller } from "react-hook-form";
+import { useSignInSignUpStyles } from "../Styles/SignInSignUpStyles";
+import { SignInGoogle } from "../SignIn";
 
-const SignUpPage = () => (
-  <div>
-    <h1>SignUp</h1>
-    <SignUpForm />
-  </div>
-);
+const SignUpPage = () => <SignUpForm />;
 
 interface SignUpProps {
   email: string;
@@ -23,14 +32,6 @@ interface SignUpProps {
   passwordTwo: string;
   isAdmin: boolean;
 }
-
-const initialValues: SignUpProps = {
-  email: "",
-  username: "",
-  passwordOne: "",
-  passwordTwo: "",
-  isAdmin: false,
-};
 
 const SignUpSchema = Yup.object().shape({
   username: Yup.string().min(4, "min 4 characters").required("required"),
@@ -46,20 +47,25 @@ const SignUpSchema = Yup.object().shape({
 const SignUpFormBase = (props: any) => {
   const [error, setError] = useState(null);
   const firebase = useContext(FirebaseContext);
+  const classes = useSignInSignUpStyles();
 
-  const handleSubmit = (values: SignUpProps, actions: any): void => {
+  const { register, handleSubmit, errors, control } = useForm<SignUpProps>({
+    resolver: yupResolver(SignUpSchema),
+  });
+
+  const onSubmit = handleSubmit((data) => {
     const roles: any = {};
-    if (values.isAdmin) {
+    if (data.isAdmin) {
       roles[ROLES.ADMIN] = ROLES.ADMIN;
     }
 
     firebase
-      ?.doCreateUserWithEmailAndPassword(values.email, values.passwordOne)
+      ?.doCreateUserWithEmailAndPassword(data.email, data.passwordOne)
       .then((authUser: any) => {
         // Create a user in your Firebase realtime database
         return firebase.user(authUser.user.uid).set({
-          username: values.username,
-          email: values.email,
+          username: data.username,
+          email: data.email,
           roles,
         });
       })
@@ -73,70 +79,107 @@ const SignUpFormBase = (props: any) => {
       .catch((error: any) => {
         setError(error);
       });
-    actions.setSubmitting(false);
-    actions.resetForm();
-  };
+  });
 
   return (
-    <Formik
-      initialValues={initialValues}
-      onSubmit={handleSubmit}
-      validationSchema={SignUpSchema}
-    >
-      {({ dirty, isValid, isSubmitting, submitForm }) => {
-        return (
-          <Form>
-            <Field
-              component={TextField}
-              name="username"
-              type="text"
-              label="Username"
-            />
-            <br />
-            <Field
-              component={TextField}
-              name="email"
-              type="email"
-              label="Email"
-            />
-            <br />
-            <Field
-              component={TextField}
-              type="password"
-              label="Password"
-              name="passwordOne"
-            />
-            <br />
-            <Field
-              component={TextField}
-              type="password"
-              label="Repeat Password"
-              name="passwordTwo"
-            />
-            <br />
-            <Field
-              component={CheckboxWithLabel}
-              type="checkbox"
-              name="isAdmin"
-              Label={{ label: "Admin" }}
-            />
-            {isSubmitting && <LinearProgress />}
+    <Container component="main" maxWidth="xs">
+      <CssBaseline />
+      <div className={classes.paper}>
+        <Avatar className={classes.avatar}>
+          <LockOutlinedIcon />
+        </Avatar>
+        <Typography component="h1" variant="h5">
+          Sign Up
+        </Typography>
+        <form className={classes.form} onSubmit={onSubmit}>
+          <TextField
+            variant="outlined"
+            margin="normal"
+            inputRef={register}
+            required
+            fullWidth
+            id="username"
+            label="Username"
+            name="username"
+            autoComplete="username"
+            autoFocus
+            error={errors.username ? true : false}
+            helperText={errors.username?.message}
+          />
+          <TextField
+            variant="outlined"
+            margin="normal"
+            inputRef={register}
+            required
+            fullWidth
+            id="email"
+            label="Email Address"
+            name="email"
+            autoComplete="email"
+            error={errors.email ? true : false}
+            helperText={errors.email?.message}
+          />
+          <TextField
+            variant="outlined"
+            margin="normal"
+            inputRef={register}
+            required
+            fullWidth
+            name="passwordOne"
+            label="Password"
+            type="password"
+            id="passwordOne"
+            autoComplete="current-passwordOne"
+            error={errors.passwordOne ? true : false}
+            helperText={errors.passwordOne?.message}
+          />
+          <TextField
+            variant="outlined"
+            margin="normal"
+            inputRef={register}
+            required
+            fullWidth
+            name="passwordTwo"
+            label="Repeat Password"
+            type="password"
+            id="passwordTwo"
+            autoComplete="current-passwordTwo"
+            error={errors.passwordTwo ? true : false}
+            helperText={errors.passwordTwo?.message}
+          />
+          <FormControlLabel
+            control={
+              <Controller
+                as={Checkbox}
+                control={control}
+                name="isAdmin"
+                color="primary"
+                defaultValue={false}
+              />
+            }
+            label="Admin"
+          />
 
-            <br />
-            <Button
-              variant="contained"
-              color="primary"
-              disabled={!dirty || !isValid || isSubmitting}
-              onClick={submitForm}
-            >
-              Sign Up
-            </Button>
+          {error && <Alert severity="error">{(error as any).message}</Alert>}
 
-            {error && <p>{(error as any).message}</p>}
-          </Form>
-        );
-      }}
-    </Formik>
+          <Button
+            type="submit"
+            fullWidth
+            variant="contained"
+            color="primary"
+            className={classes.submit}
+          >
+            Sign Up
+          </Button>
+          <Grid container justify="flex-end">
+            <Grid item>
+              <Link to={ROUTES.SIGN_IN}>Already have an account? Sign in</Link>
+            </Grid>
+          </Grid>
+        </form>
+        <SignInGoogle />
+      </div>
+    </Container>
   );
 };
 

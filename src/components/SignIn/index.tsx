@@ -18,28 +18,8 @@ import {
 } from "@material-ui/core";
 import { Alert } from "@material-ui/lab";
 import LockOutlinedIcon from "@material-ui/icons/LockOutlined";
-import { makeStyles } from "@material-ui/core/styles";
 import { useForm } from "react-hook-form";
-
-const useStyles = makeStyles((theme) => ({
-  paper: {
-    marginTop: theme.spacing(8),
-    display: "flex",
-    flexDirection: "column",
-    alignItems: "center",
-  },
-  avatar: {
-    margin: theme.spacing(1),
-    backgroundColor: theme.palette.secondary.main,
-  },
-  form: {
-    width: "100%", // Fix IE 11 issue.
-    marginTop: theme.spacing(1),
-  },
-  submit: {
-    margin: theme.spacing(3, 0, 2),
-  },
-}));
+import { useSignInSignUpStyles } from "../Styles/SignInSignUpStyles";
 
 interface SignInProps {
   email: string;
@@ -56,7 +36,8 @@ const SignInPage = () => <SignInForm />;
 const SignInFormBase = (props: any) => {
   const [error, setError] = useState(null);
   const firebase = useContext(FirebaseContext);
-  const classes = useStyles();
+  const classes = useSignInSignUpStyles();
+
   const { register, handleSubmit, errors } = useForm<SignInProps>({
     resolver: yupResolver(SignInSchema),
   });
@@ -81,9 +62,9 @@ const SignInFormBase = (props: any) => {
           <LockOutlinedIcon />
         </Avatar>
         <Typography component="h1" variant="h5">
-          Sign in
+          Sign In
         </Typography>
-        <form className={classes.form} noValidate onSubmit={onSubmit}>
+        <form className={classes.form} onSubmit={onSubmit}>
           <TextField
             variant="outlined"
             margin="normal"
@@ -142,7 +123,7 @@ const SignInFormBase = (props: any) => {
 const SignInGoogleBase = (props: any) => {
   const [error, setError] = useState(null);
   const firebase = useContext(FirebaseContext);
-  const classes = useStyles();
+  const classes = useSignInSignUpStyles();
 
   const onSubmit = (event: React.FormEvent) => {
     firebase
