@@ -2,80 +2,99 @@ import React, { useContext, useState } from "react";
 import { Link } from "react-router-dom";
 import { FirebaseContext } from "../Firebase";
 import * as ROUTES from "../../constants/routes";
-import { Formik, Form, Field } from "formik";
+import { yupResolver } from "@hookform/resolvers/yup";
 import * as Yup from "yup";
-import { TextField } from "formik-material-ui";
-import { Button, LinearProgress } from "@material-ui/core";
+import {
+  Button,
+  CssBaseline,
+  TextField,
+  Typography,
+  Container,
+} from "@material-ui/core";
+import { Alert } from "@material-ui/lab";
+import { useForm } from "react-hook-form";
 
 interface PasswordForgetProps {
   email: string;
 }
 
-const initialValues: PasswordForgetProps = {
-  email: "",
-};
-
 const PasswordForgetSchema = Yup.object().shape({
   email: Yup.string().required("required").email(),
 });
 
-const PasswordForgetPage = () => (
-  <div>
-    <h1>PasswordForget</h1>
-    <PasswordForgetForm />
-  </div>
-);
+const PasswordForgetPage = () => <PasswordForgetForm />;
 
 const PasswordForgetForm = () => {
   const [error, setError] = useState(null);
   const firebase = useContext(FirebaseContext);
+  const [isSuccessfullySubmitted, setIsSuccessfullySubmitted] = useState(false);
+  const {
+    register,
+    handleSubmit,
+    errors,
+    formState,
+    reset,
+  } = useForm<PasswordForgetProps>({
+    resolver: yupResolver(PasswordForgetSchema),
+  });
 
-  const handleSubmit = (values: PasswordForgetProps, actions: any): void => {
+  const onSubmit = handleSubmit((data) => {
     firebase
-      ?.doPasswordReset(values.email)
+      ?.doPasswordReset(data.email)
       .then(() => {
         setError(null);
+        setIsSuccessfullySubmitted(true);
       })
       .catch((error: any) => {
         setError(error);
+        setIsSuccessfullySubmitted(false);
       });
-    actions.setSubmitting(false);
-    actions.resetForm();
-  };
+    reset();
+  });
 
   return (
-    <Formik
-      initialValues={initialValues}
-      onSubmit={handleSubmit}
-      validationSchema={PasswordForgetSchema}
-    >
-      {({ dirty, isValid, isSubmitting, submitForm }) => {
-        return (
-          <Form>
-            <Field
-              component={TextField}
-              name="email"
-              type="email"
-              label="Email"
-            />
-            <br />
-            {isSubmitting && <LinearProgress />}
+    <Container component="main" maxWidth="xs">
+      <CssBaseline />
+      <div className={""}>
+        <Typography component="h1" variant="h5">
+          Send New Password Link
+        </Typography>
+        <form className={""} onSubmit={onSubmit}>
+          <TextField
+            variant="outlined"
+            margin="normal"
+            inputRef={register}
+            required
+            fullWidth
+            id="email"
+            label="Email Address"
+            name="email"
+            autoComplete="email"
+            error={errors.email ? true : false}
+            helperText={errors.email?.message}
+            disabled={formState.isSubmitting}
+            onFocus={() => setIsSuccessfullySubmitted(false)}
+            autoFocus
+          />
 
-            <br />
-            <Button
-              variant="contained"
-              color="primary"
-              disabled={!dirty || !isValid || isSubmitting}
-              onClick={submitForm}
-            >
-              Send Password Link
-            </Button>
+          {error && <Alert severity="error">{(error as any).message}</Alert>}
+          {isSuccessfullySubmitted && (
+            <Alert severity="success">Send Password Link successfully</Alert>
+          )}
 
-            {error && <p>{(error as any).message}</p>}
-          </Form>
-        );
-      }}
-    </Formik>
+          <Button
+            type="submit"
+            fullWidth
+            variant="contained"
+            color="primary"
+            className={""}
+            disabled={formState.isSubmitting || isSuccessfullySubmitted}
+          >
+            Send Password Link
+          </Button>
+        </form>
+      </div>
+    </Container>
   );
 };
 
