@@ -19,7 +19,7 @@ import {
 } from "@material-ui/core";
 import { Alert } from "@material-ui/lab";
 import LockOutlinedIcon from "@material-ui/icons/LockOutlined";
-import { useForm, Controller } from "react-hook-form";
+import { useForm } from "react-hook-form";
 import { useSignInSignUpStyles } from "../Styles/SignInSignUpStyles";
 import { SignInGoogle } from "../SignIn";
 
@@ -49,7 +49,7 @@ const SignUpFormBase = (props: any) => {
   const firebase = useContext(FirebaseContext);
   const classes = useSignInSignUpStyles();
 
-  const { register, handleSubmit, errors, control } = useForm<SignUpProps>({
+  const { register, handleSubmit, errors } = useForm<SignUpProps>({
     resolver: yupResolver(SignUpSchema),
   });
 
@@ -66,7 +66,7 @@ const SignUpFormBase = (props: any) => {
         return firebase.user(authUser.user.uid).set({
           username: data.username,
           email: data.email,
-          roles,
+          roles: roles,
         });
       })
       .then(() => {
@@ -149,13 +149,7 @@ const SignUpFormBase = (props: any) => {
           />
           <FormControlLabel
             control={
-              <Controller
-                as={Checkbox}
-                control={control}
-                name="isAdmin"
-                color="primary"
-                defaultValue={false}
-              />
+              <Checkbox name="isAdmin" color="primary" inputRef={register} />
             }
             label="Admin"
           />
