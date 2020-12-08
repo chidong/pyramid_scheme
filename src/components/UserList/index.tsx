@@ -45,7 +45,7 @@ const options: any = {
 interface User {
   email: string;
   username: string;
-  roles?: [];
+  roles?: {};
 }
 
 export const UserList = () => {
@@ -55,7 +55,10 @@ export const UserList = () => {
   });
 
   const userList = useMemo(() => {
-    return users?.map((user) => ({ ...user, roles: null }));
+    return users?.map((user) => ({
+      ...user,
+      roles: Object.keys(user.roles ? user.roles : {}),
+    }));
   }, [users]);
 
   useEffect(() => {
