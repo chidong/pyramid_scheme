@@ -78,12 +78,17 @@ const Navigation: React.FC = (props: any) => {
               <MenuIcon />
             </IconButton>
 
-            <Typography variant="h6" className={classes.title}>
+            <Typography variant="h5" className={classes.title}>
               Pyramid
             </Typography>
 
             {authUser ? (
-              <SignOutButton />
+              <>
+                <Typography variant="h6" className={classes.title}>
+                  logged in as {authUser.email}
+                </Typography>
+                <SignOutButton />
+              </>
             ) : (
               <Grid container justify="flex-end" spacing={2}>
                 <Grid item>
