@@ -28,7 +28,7 @@ const withAuthorization = (
           listener();
         }
       };
-    });
+    }, [firebase, props.history]);
 
     return condition(authUser) ? <Component {...props} /> : null;
   };

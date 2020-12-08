@@ -1,44 +1,21 @@
-import React, { useContext } from "react";
+import React from "react";
 import { compose } from "recompose";
 import {
   withAuthorization,
   withEmailVerification,
 } from "../../components/Session";
 import * as ROLES from "../../constants/roles";
-import { useList } from "react-firebase-hooks/database";
-import { FirebaseContext } from "../../components/Firebase";
 import { AuthUser } from "../../components/Session/withAuthentication";
+import { UserList } from "../../components/UserList/index";
 
 const Admin = () => {
-  const firebase = useContext(FirebaseContext);
-  const [users, loading, error] = useList(firebase?.db.ref("users"));
-
   return (
     <div>
       <h1>Admin</h1>
       <p>The Admin Page is accessible by every signed in admin user.</p>
-      {error && <strong>Error: {error}</strong>}
-      {loading && <span>List: Loading...</span>}
-      {!loading && users && <UserList users={users} />}
-    </div>
-  );
-};
 
-const UserList = ({ users }: { users: any[] | undefined }) => {
-  return (
-    <ul>
-      {users &&
-        users.map((user: any, i) => (
-          <li key={i}>
-            <span>
-              <strong>E-Mail:</strong> {user.val().email}
-            </span>
-            <span>
-              <strong>Username:</strong> {user.val().username}
-            </span>
-          </li>
-        ))}
-    </ul>
+      <UserList />
+    </div>
   );
 };
 
