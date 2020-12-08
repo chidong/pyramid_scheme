@@ -1,10 +1,13 @@
 import React, { useContext } from "react";
 import { compose } from "recompose";
-import { withAuthorization, withEmailVerification } from "../Session";
+import {
+  withAuthorization,
+  withEmailVerification,
+} from "../../components/Session";
 import * as ROLES from "../../constants/roles";
 import { useList } from "react-firebase-hooks/database";
-import { FirebaseContext } from "../Firebase";
-import { AuthUser } from "../Session/withAuthentication";
+import { FirebaseContext } from "../../components/Firebase";
+import { AuthUser } from "../../components/Session/withAuthentication";
 
 const Admin = () => {
   const firebase = useContext(FirebaseContext);

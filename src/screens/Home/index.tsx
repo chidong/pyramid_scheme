@@ -4,9 +4,9 @@ import {
   AuthUserContext,
   withAuthorization,
   withEmailVerification,
-} from "../Session";
-import { FirebaseContext } from "../Firebase";
-import { AuthUser } from "../Session/withAuthentication";
+} from "../../components/Session";
+import { FirebaseContext } from "../../components/Firebase";
+import { AuthUser } from "../../components/Session/withAuthentication";
 
 const Home = () => (
   <div>

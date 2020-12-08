@@ -1,7 +1,5 @@
 import React, { useContext, useState } from "react";
-import { Link } from "react-router-dom";
-import { FirebaseContext } from "../Firebase";
-import * as ROUTES from "../../constants/routes";
+import { FirebaseContext } from "../../components/Firebase";
 import { yupResolver } from "@hookform/resolvers/yup";
 import * as Yup from "yup";
 import {
@@ -14,17 +12,20 @@ import {
 import { Alert } from "@material-ui/lab";
 import { useForm } from "react-hook-form";
 
-interface PasswordForgetProps {
-  email: string;
+interface PasswordChangeProps {
+  passwordOne: string;
+  passwordTwo: string;
 }
 
-const PasswordForgetSchema = Yup.object().shape({
-  email: Yup.string().required("required").email(),
+const PasswordChangeSchema = Yup.object().shape({
+  passwordOne: Yup.string().min(6, "min 6 characters").required("required"),
+  passwordTwo: Yup.string()
+    .min(6, "min 6 characters")
+    .required("required")
+    .oneOf([Yup.ref("passwordOne")], "passwords have to match"),
 });
 
-const PasswordForgetPage = () => <PasswordForgetForm />;
-
-const PasswordForgetForm = () => {
+const PasswordChangeForm = () => {
   const [error, setError] = useState(null);
   const firebase = useContext(FirebaseContext);
   const [isSuccessfullySubmitted, setIsSuccessfullySubmitted] = useState(false);
@@ -34,13 +35,13 @@ const PasswordForgetForm = () => {
     errors,
     formState,
     reset,
-  } = useForm<PasswordForgetProps>({
-    resolver: yupResolver(PasswordForgetSchema),
+  } = useForm<PasswordChangeProps>({
+    resolver: yupResolver(PasswordChangeSchema),
   });
 
   const onSubmit = handleSubmit((data) => {
     firebase
-      ?.doPasswordReset(data.email)
+      ?.doPasswordUpdate(data.passwordOne)
       .then(() => {
         setError(null);
         setIsSuccessfullySubmitted(true);
@@ -57,7 +58,7 @@ const PasswordForgetForm = () => {
       <CssBaseline />
       <div className={""}>
         <Typography component="h1" variant="h5">
-          Send New Password Link
+          Password Change
         </Typography>
         <form className={""} onSubmit={onSubmit}>
           <TextField
@@ -66,20 +67,35 @@ const PasswordForgetForm = () => {
             inputRef={register}
             required
             fullWidth
-            id="email"
-            label="Email Address"
-            name="email"
-            autoComplete="email"
-            error={errors.email ? true : false}
-            helperText={errors.email?.message}
+            name="passwordOne"
+            label="Password"
+            type="password"
+            id="passwordOne"
+            autoComplete="current-passwordOne"
+            error={errors.passwordOne ? true : false}
+            helperText={errors.passwordOne?.message}
             disabled={formState.isSubmitting}
             onFocus={() => setIsSuccessfullySubmitted(false)}
-            autoFocus
+          />
+          <TextField
+            variant="outlined"
+            margin="normal"
+            inputRef={register}
+            required
+            fullWidth
+            name="passwordTwo"
+            label="Repeat Password"
+            type="password"
+            id="passwordTwo"
+            autoComplete="current-passwordTwo"
+            error={errors.passwordTwo ? true : false}
+            helperText={errors.passwordTwo?.message}
+            disabled={formState.isSubmitting}
           />
 
           {error && <Alert severity="error">{(error as any).message}</Alert>}
           {isSuccessfullySubmitted && (
-            <Alert severity="success">Send Password Link successfully</Alert>
+            <Alert severity="success">Password changed successfully</Alert>
           )}
 
           <Button
@@ -90,7 +106,7 @@ const PasswordForgetForm = () => {
             className={""}
             disabled={formState.isSubmitting || isSuccessfullySubmitted}
           >
-            Send Password Link
+            Change Password
           </Button>
         </form>
       </div>
@@ -98,12 +114,4 @@ const PasswordForgetForm = () => {
   );
 };
 
-const PasswordForgetLink = () => (
-  <p>
-    <Link to={ROUTES.PASSWORD_FORGET}>Forgot Password?</Link>
-  </p>
-);
-
-export default PasswordForgetPage;
-
-export { PasswordForgetForm, PasswordForgetLink };
+export default PasswordChangeForm;

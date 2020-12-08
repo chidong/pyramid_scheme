@@ -14,7 +14,7 @@ import About from "../About";
 import { Grid } from "@material-ui/core";
 
 import * as ROUTES from "../../constants/routes";
-import { withAuthentication } from "../Session";
+import { withAuthentication } from "../../components/Session";
 
 const App = () => (
   <BrowserRouter>

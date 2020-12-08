@@ -2,7 +2,7 @@ import React from "react";
 import ReactDOM from "react-dom";
 import "typeface-roboto";
 import "./index.css";
-import App from "./components/App";
+import App from "./screens/App";
 import reportWebVitals from "./reportWebVitals";
 import Firebase, { FirebaseContext } from "./components/Firebase";
 

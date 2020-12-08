@@ -4,10 +4,10 @@ import {
   AuthUserContext,
   withAuthorization,
   withEmailVerification,
-} from "../Session";
+} from "../../components/Session";
 
 import PasswordChangeForm from "../PasswordChange";
-import { AuthUser } from "../Session/withAuthentication";
+import { AuthUser } from "../../components/Session/withAuthentication";
 
 const AccountPage = () => {
   const authUser = useContext(AuthUserContext);

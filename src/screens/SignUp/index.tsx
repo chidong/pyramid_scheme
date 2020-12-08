@@ -3,7 +3,7 @@ import { Link, withRouter } from "react-router-dom";
 import * as ROUTES from "../../constants/routes";
 import * as ROLES from "../../constants/roles";
 import { compose } from "recompose";
-import { FirebaseContext } from "../Firebase";
+import { FirebaseContext } from "../../components/Firebase";
 import { yupResolver } from "@hookform/resolvers/yup";
 import * as Yup from "yup";
 import {
@@ -20,7 +20,7 @@ import {
 import { Alert } from "@material-ui/lab";
 import LockOutlinedIcon from "@material-ui/icons/LockOutlined";
 import { useForm } from "react-hook-form";
-import { useSignInSignUpStyles } from "../Styles/SignInSignUpStyles";
+import { useSignInSignUpStyles } from "../../components/Styles/SignInSignUpStyles";
 import { SignInGoogle } from "../SignIn";
 
 const SignUpPage = () => <SignUpForm />;
