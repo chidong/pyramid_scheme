@@ -131,7 +131,7 @@ const SignInGoogleBase = (props: any) => {
       .then((socialAuthUser: any) => {
         // Create a user in your Firebase Realtime Database too
         if (socialAuthUser.additionalUserInfo.isNewUser) {
-          return firebase.user(socialAuthUser.user.uid).set({
+          return firebase.user(socialAuthUser.user.uid).update({
             username: socialAuthUser.user.displayName,
             email: socialAuthUser.user.email,
           });
