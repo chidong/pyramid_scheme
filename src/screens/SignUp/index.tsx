@@ -1,7 +1,6 @@
 import React, { useState, useContext } from "react";
 import { Link, withRouter } from "react-router-dom";
 import * as ROUTES from "../../constants/routes";
-import * as ROLES from "../../constants/roles";
 import { compose } from "recompose";
 import { FirebaseContext } from "../../components/Firebase";
 import { yupResolver } from "@hookform/resolvers/yup";
@@ -54,11 +53,6 @@ const SignUpFormBase = (props: any) => {
   });
 
   const onSubmit = handleSubmit((data) => {
-    const roles: any = {};
-    if (data.isAdmin) {
-      roles[ROLES.ADMIN] = ROLES.ADMIN;
-    }
-
     firebase
       ?.doCreateUserWithEmailAndPassword(data.email, data.passwordOne)
       .then((authUser: any) => {
@@ -66,7 +60,8 @@ const SignUpFormBase = (props: any) => {
         return firebase.user(authUser.user.uid).set({
           username: data.username,
           email: data.email,
-          roles: roles,
+          isAdmin: data.isAdmin,
+          isActivated: false,
         });
       })
       .then(() => {

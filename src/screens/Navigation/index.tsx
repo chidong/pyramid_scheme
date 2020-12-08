@@ -3,7 +3,6 @@ import { NavLink, withRouter, Link } from "react-router-dom";
 import SignOutButton from "../SignOut";
 import * as ROUTES from "../../constants/routes";
 import { AuthUserContext } from "../../components/Session";
-import * as ROLES from "../../constants/roles";
 import {
   AppBar,
   Button,
@@ -152,7 +151,7 @@ const Navigation: React.FC = (props: any) => {
               </div>
             )}
 
-            {authUser && authUser.roles[ROLES.ADMIN] && (
+            {authUser && authUser.isAdmin && (
               <NavLink to={ROUTES.ADMIN} style={{ textDecoration: "none" }}>
                 <MenuItem selected={activeRoute(ROUTES.ADMIN)}>
                   <ListItemText primary="ADMIN" />

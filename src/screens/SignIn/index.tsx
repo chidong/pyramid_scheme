@@ -134,7 +134,8 @@ const SignInGoogleBase = (props: any) => {
           return firebase.user(socialAuthUser.user.uid).set({
             username: socialAuthUser.user.displayName,
             email: socialAuthUser.user.email,
-            roles: {},
+            isAdmin: false,
+            isActivated: false,
           });
         }
       })

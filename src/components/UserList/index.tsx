@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useMemo } from "react";
+import React, { useContext, useEffect } from "react";
 import { useListVals } from "react-firebase-hooks/database";
 import { FirebaseContext } from "../../components/Firebase";
 import MUIDataTable from "mui-datatables";
@@ -21,19 +21,25 @@ const userListColums = [
     },
   },
   {
-    name: "roles",
-    label: "Roles",
+    name: "isAdmin",
+    label: "Admin",
     options: {
       filter: true,
       sort: false,
+      customBodyRender: (value: any) => {
+        return <div>{value ? "true" : "false"}</div>;
+      },
     },
   },
   {
-    name: "activated",
+    name: "isActivated",
     label: "Activated",
     options: {
       filter: true,
       sort: false,
+      customBodyRender: (value: any) => {
+        return <div>{value ? "true" : "false"}</div>;
+      },
     },
   },
 ];
@@ -45,7 +51,8 @@ const options: any = {
 interface User {
   email: string;
   username: string;
-  roles?: {};
+  isAdmin: boolean;
+  isActivated: boolean;
 }
 
 export const UserList = () => {
@@ -54,25 +61,18 @@ export const UserList = () => {
     keyField: "uid",
   });
 
-  const userList = useMemo(() => {
-    return users?.map((user) => ({
-      ...user,
-      roles: Object.keys(user.roles ? user.roles : {}),
-    }));
-  }, [users]);
-
   useEffect(() => {
-    console.log(JSON.stringify(userList));
-  }, [userList]);
+    console.log(JSON.stringify(users));
+  }, [users]);
 
   return (
     <>
       {error && <strong>Error: {error}</strong>}
       {loading && <span>List: Loading...</span>}
-      {userList && (
+      {users && (
         <MUIDataTable
           title={"Users List"}
-          data={userList as any}
+          data={users as any}
           columns={userListColums}
           options={options}
         />

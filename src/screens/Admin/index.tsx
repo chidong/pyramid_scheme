@@ -4,7 +4,6 @@ import {
   withAuthorization,
   withEmailVerification,
 } from "../../components/Session";
-import * as ROLES from "../../constants/roles";
 import { AuthUser } from "../../components/Session/withAuthentication";
 import { UserList } from "../../components/UserList/index";
 
@@ -20,7 +19,7 @@ const Admin = () => {
 };
 
 const condition = (authUser: AuthUser | null) =>
-  (authUser && !!authUser.roles[ROLES.ADMIN]) as boolean;
+  (authUser && !!authUser.isAdmin) as boolean;
 
 export default compose(
   withEmailVerification,

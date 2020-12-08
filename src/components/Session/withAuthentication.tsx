@@ -8,7 +8,8 @@ export interface AuthUser {
   email: string;
   emailVerified: boolean;
   providerData: any[];
-  roles: any;
+  isAdmin: boolean;
+  isActivated: boolean;
   username: string;
 }
 
