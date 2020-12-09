@@ -8,33 +8,37 @@ export const StartSeasonButton = () => {
   const [successMessage, setSuccessMessage] = useState("");
 
   const startNewSeason = () => {
-    firebase?.rankings().remove();
     firebase
-      ?.users()
-      .orderByChild("isActivated")
-      .equalTo(true)
-      .once("value", function (snapshot) {
-        let users: any[] = [];
-
-        snapshot.forEach(function (childSnapshot) {
-          const key = childSnapshot.key;
-
-          users.push({
-            key: key,
-          });
-        });
-
-        users = users.sort(() => Math.random() - 0.5);
-
-        users.forEach((user, index) => {
-          firebase?.rankings().push({
-            rank: index + 1,
-            userId: user.key,
-          });
-        });
-      })
+      ?.rankings()
+      .remove()
       .then(() => {
-        setSuccessMessage("Successfully created new Season");
+        firebase
+          ?.users()
+          .orderByChild("isActivated")
+          .equalTo(true)
+          .once("value", function (snapshot) {
+            let users: any[] = [];
+
+            snapshot.forEach(function (childSnapshot) {
+              const key = childSnapshot.key;
+
+              users.push({
+                key: key,
+              });
+            });
+
+            users = users.sort(() => Math.random() - 0.5);
+
+            users.forEach((user, index) => {
+              firebase?.rankings().push({
+                rank: index + 1,
+                userId: user.key,
+              });
+            });
+          })
+          .then(() => {
+            setSuccessMessage("Successfully created new Season");
+          });
       });
   };
 
