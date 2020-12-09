@@ -1,5 +1,6 @@
 import React from "react";
 import { compose } from "recompose";
+import { StartSeasonButton } from "../../components/Pyramid";
 import {
   withAuthorization,
   withEmailVerification,
@@ -14,6 +15,7 @@ const Admin = () => {
       <p>The Admin Page is accessible by every signed in admin user.</p>
 
       <UserList />
+      <StartSeasonButton />
     </div>
   );
 };
