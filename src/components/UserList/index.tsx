@@ -1,4 +1,4 @@
-import React, { useContext, useEffect } from "react";
+import React, { useContext } from "react";
 import { useListVals } from "react-firebase-hooks/database";
 import { FirebaseContext } from "../../components/Firebase";
 import MUIDataTable from "mui-datatables";
