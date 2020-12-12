@@ -137,10 +137,15 @@ const Navigation: React.FC = (props: any) => {
               </NavLink>
             )}
             {authUser && (
-              <div>
+              <>
                 <NavLink to={ROUTES.HOME} style={{ textDecoration: "none" }}>
                   <MenuItem selected={activeRoute(ROUTES.HOME)}>
                     <ListItemText primary="HOME" />
+                  </MenuItem>
+                </NavLink>
+                <NavLink to={ROUTES.PYRAMID} style={{ textDecoration: "none" }}>
+                  <MenuItem selected={activeRoute(ROUTES.PYRAMID)}>
+                    <ListItemText primary="PYRAMID" />
                   </MenuItem>
                 </NavLink>
                 <NavLink to={ROUTES.ACCOUNT} style={{ textDecoration: "none" }}>
@@ -148,7 +153,7 @@ const Navigation: React.FC = (props: any) => {
                     <ListItemText primary="ACCOUNT" />
                   </MenuItem>
                 </NavLink>
-              </div>
+              </>
             )}
 
             {authUser && authUser.isAdmin && (

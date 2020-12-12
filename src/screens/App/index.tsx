@@ -15,6 +15,7 @@ import { Grid } from "@material-ui/core";
 
 import * as ROUTES from "../../constants/routes";
 import { withAuthentication } from "../../components/Session";
+import Pyramid from "../Pyramid";
 
 const App = () => (
   <BrowserRouter>
@@ -36,6 +37,7 @@ const App = () => (
               component={PasswordForgetPage}
             />
             <Route exact path={ROUTES.HOME} component={HomePage} />
+            <Route exact path={ROUTES.PYRAMID} component={Pyramid} />
             <Route exact path={ROUTES.ACCOUNT} component={AccountPage} />
             <Route exact path={ROUTES.ADMIN} component={AdminPage} />
             <Route exact path={ROUTES.CONTACT} component={Contact} />

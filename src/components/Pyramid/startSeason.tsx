@@ -21,9 +21,11 @@ export const StartSeasonButton = () => {
 
             snapshot.forEach(function (childSnapshot) {
               const key = childSnapshot.key;
+              const username = childSnapshot.val().username;
 
               users.push({
                 key: key,
+                username: username,
               });
             });
 
@@ -33,6 +35,8 @@ export const StartSeasonButton = () => {
               firebase?.rankings().push({
                 rank: index + 1,
                 userId: user.key,
+                username: user.username,
+                createdAt: firebase.serverValue.TIMESTAMP,
               });
             });
           })
