@@ -82,12 +82,7 @@ const Navigation: React.FC = (props: any) => {
             </Typography>
 
             {authUser ? (
-              <>
-                <Typography variant="h6" className={classes.title}>
-                  logged in as {authUser.email}
-                </Typography>
-                <SignOutButton />
-              </>
+              <SignOutButton />
             ) : (
               <Grid container justify="flex-end" spacing={2}>
                 <Grid item>
@@ -137,7 +132,7 @@ const Navigation: React.FC = (props: any) => {
               </NavLink>
             )}
             {authUser && (
-              <>
+              <div>
                 <NavLink to={ROUTES.HOME} style={{ textDecoration: "none" }}>
                   <MenuItem selected={activeRoute(ROUTES.HOME)}>
                     <ListItemText primary="HOME" />
@@ -153,7 +148,7 @@ const Navigation: React.FC = (props: any) => {
                     <ListItemText primary="ACCOUNT" />
                   </MenuItem>
                 </NavLink>
-              </>
+              </div>
             )}
 
             {authUser && authUser.isAdmin && (
