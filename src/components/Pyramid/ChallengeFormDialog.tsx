@@ -1,4 +1,4 @@
-import React, { useContext, useState, useEffect } from "react";
+import React, { useContext, useState } from "react";
 import Button from "@material-ui/core/Button";
 import TextField from "@material-ui/core/TextField";
 import Dialog from "@material-ui/core/Dialog";
@@ -57,8 +57,9 @@ export const ChallengeFormDialog = ({
     firebase?.challenges().push({
       challengerId: data.challengerId,
       defenderId: data.defenderId,
-      challengeDate: data.challengeDate,
+      challengeDate: Date.parse(data.challengeDate.toString()),
       location: data.location,
+      createdAt: firebase.serverValue.TIMESTAMP,
     });
     //Update Challenger rank
     firebase?.rankings().child(challenger.id).update({ isInAChallenge: true });

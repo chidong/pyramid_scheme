@@ -1,5 +1,5 @@
-import { Button, Card, CardContent, Grid } from "@material-ui/core";
-import React, { useContext, useState, useEffect } from "react";
+import { Card, CardContent, Grid } from "@material-ui/core";
+import React, { useContext } from "react";
 import { useListVals } from "react-firebase-hooks/database";
 import { FirebaseContext } from "../../components/Firebase";
 import AuthUserContext from "../../components/Session/context";
@@ -65,10 +65,10 @@ const Pyramid = () => {
 
       {!loading &&
         rankings &&
-        genPyramid(rankings).map((row: Array<Ranking | null>) => (
-          <Grid container justify="center" spacing={2}>
-            {row.map((ranking: Ranking | null) => (
-              <Grid item>
+        genPyramid(rankings).map((row: Array<Ranking | null>, i) => (
+          <Grid container justify="center" spacing={2} key={i}>
+            {row.map((ranking: Ranking | null, i) => (
+              <Grid item key={i}>
                 <Card
                   variant="outlined"
                   className={`${classes.fullHeightCard} ${
