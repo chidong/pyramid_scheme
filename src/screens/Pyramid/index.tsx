@@ -9,6 +9,7 @@ import { withAuthorization } from "../../components/Session";
 import { compose } from "recompose";
 import { AuthUser } from "../../components/Session/withAuthentication";
 import { ChallengeFormDialog } from "../../components/Pyramid/ChallengeFormDialog";
+import { format } from "date-fns";
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -31,6 +32,7 @@ export interface Ranking {
   lastLost: Date | null;
   lastWon: Date | null;
   isAbsent: boolean;
+  createdAt: Date;
 }
 
 const Pyramid = () => {
@@ -82,6 +84,10 @@ const Pyramid = () => {
                       <Grid container direction="column">
                         <Grid item>Rank: {ranking.rank}</Grid>
                         <Grid item> User: {ranking.username}</Grid>
+                        <Grid item>
+                          Created:{" "}
+                          {format(ranking.createdAt, "MM/dd/yyyy hh:mm")}
+                        </Grid>
                         {canChallenge(ownRanking as Ranking, ranking) && (
                           <ChallengeFormDialog
                             challenger={ownRanking as Ranking}
