@@ -88,6 +88,10 @@ class Firebase {
   // *** Ranking API ***
   ranking = (id: string) => this.db.ref(`rankings/${id}`);
   rankings = () => this.db.ref("rankings");
+
+  // *** Challenge API ***
+  challenge = (id: string) => this.db.ref(`challenges/${id}`);
+  challenges = () => this.db.ref("challenges");
 }
 
 export default Firebase;

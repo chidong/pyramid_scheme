@@ -1,4 +1,4 @@
-import { Button, Card, CardContent, Grid, Modal } from "@material-ui/core";
+import { Button, Card, CardContent, Grid } from "@material-ui/core";
 import React, { useContext, useState, useEffect } from "react";
 import { useListVals } from "react-firebase-hooks/database";
 import { FirebaseContext } from "../../components/Firebase";
@@ -8,6 +8,7 @@ import withEmailVerification from "../../components/Session/withEmailVerificatio
 import { withAuthorization } from "../../components/Session";
 import { compose } from "recompose";
 import { AuthUser } from "../../components/Session/withAuthentication";
+import { ChallengeFormDialog } from "../../components/Pyramid/ChallengeFormDialog";
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -21,7 +22,7 @@ const useStyles = makeStyles((theme: Theme) =>
   })
 );
 
-interface Ranking {
+export interface Ranking {
   id: string;
   userId: string;
   username: string;
@@ -82,9 +83,10 @@ const Pyramid = () => {
                         <Grid item>Rank: {ranking.rank}</Grid>
                         <Grid item> User: {ranking.username}</Grid>
                         {canChallenge(ownRanking as Ranking, ranking) && (
-                          <Button variant="outlined" color="primary">
-                            Challenge
-                          </Button>
+                          <ChallengeFormDialog
+                            challenger={ownRanking as Ranking}
+                            defender={ranking}
+                          />
                         )}
                       </Grid>
                     )}
