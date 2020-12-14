@@ -36,6 +36,10 @@ export const StartSeasonButton = () => {
                 rank: index + 1,
                 userId: user.key,
                 username: user.username,
+                isInAChallenge: false,
+                lastLost: null,
+                lastWon: null,
+                isAbsent: false,
                 createdAt: firebase.serverValue.TIMESTAMP,
               });
             });
