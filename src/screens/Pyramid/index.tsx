@@ -11,7 +11,7 @@ import { Pyramid } from "../../components/Pyramid/Pyramid";
 const PyramidPage = () => {
   return (
     <Grid container direction="column" spacing={4}>
-      <Grid item justify="center">
+      <Grid item>
         <Typography variant="h4">Pyramid</Typography>
       </Grid>
       <Grid item>

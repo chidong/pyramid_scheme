@@ -1,8 +1,8 @@
-import { Card, CardContent, Grid } from "@material-ui/core";
+import { Card, CardContent, Box, Typography, Tooltip } from "@material-ui/core";
 import React from "react";
 import { makeStyles, Theme, createStyles } from "@material-ui/core/styles";
 import { ChallengeFormDialog } from "../../components/Pyramid/ChallengeFormDialog";
-import TimeFormatter from "../../components/ui/TimeFormatter";
+import { GiDuel } from "react-icons/gi";
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -11,7 +11,7 @@ const useStyles = makeStyles((theme: Theme) =>
       width: "300px",
     },
     currentUserCard: {
-      backgroundColor: "green",
+      backgroundColor: "#7CFC00",
     },
   })
 );
@@ -54,19 +54,31 @@ const RankingCard = ({ challenger, defender }: RankingCardProps) => {
     >
       <CardContent>
         {defender && (
-          <Grid container direction="column">
-            <Grid item>Rank: {defender.rank}</Grid>
-            <Grid item>User: {defender.username}</Grid>
-            <Grid item>
-              Created: <TimeFormatter dateTime={defender.createdAt} />
-            </Grid>
+          <Box display="flex" flexDirection="column">
+            <Box display="flex" flexDirection="row">
+              <Box flexGrow={1}>
+                <Typography variant="h6">{defender.rank}</Typography>
+              </Box>
+              <Box>
+                {defender.isInAChallenge && (
+                  <Tooltip title="in a challenge">
+                    <Box>
+                      <GiDuel />
+                    </Box>
+                  </Tooltip>
+                )}
+              </Box>
+            </Box>
+
+            <Box>User: {defender.username}</Box>
+
             {canChallenge(challenger as Ranking, defender) && (
               <ChallengeFormDialog
                 challenger={challenger as Ranking}
                 defender={defender}
               />
             )}
-          </Grid>
+          </Box>
         )}
       </CardContent>
     </Card>
