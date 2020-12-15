@@ -3,13 +3,18 @@ import { useListVals } from "react-firebase-hooks/database";
 import { FirebaseContext } from "../../components/Firebase";
 import MUIDataTable from "mui-datatables";
 import TimeFormatter from "../ui/TimeFormatter";
+import TickOrCross from "../ui/TickOrCross";
 
 interface Challenge {
   id: string;
   challengerId: string;
+  challengerName: string;
   defenderId: string;
+  defenderName: string;
   challengeDate: Date;
   location: string;
+  isAccepted: boolean;
+  isRecorded: boolean;
 }
 
 export const ChallengeList = () => {
@@ -35,11 +40,29 @@ export const ChallengeList = () => {
       options: {
         filter: true,
         sort: true,
+        display: "false" as const,
+      },
+    },
+    {
+      name: "challengerName",
+      label: "Challenger",
+      options: {
+        filter: true,
+        sort: true,
       },
     },
     {
       name: "defenderId",
       label: "defenderId",
+      options: {
+        filter: true,
+        sort: false,
+        display: "false" as const,
+      },
+    },
+    {
+      name: "defenderName",
+      label: "Defender",
       options: {
         filter: true,
         sort: false,
@@ -66,6 +89,28 @@ export const ChallengeList = () => {
       options: {
         filter: true,
         sort: false,
+      },
+    },
+    {
+      name: "isAccepted",
+      label: "Accepted",
+      options: {
+        filter: true,
+        sort: false,
+        customBodyRender: (value: any) => {
+          return <TickOrCross state={value} />;
+        },
+      },
+    },
+    {
+      name: "isRecorded",
+      label: "Recorded",
+      options: {
+        filter: true,
+        sort: false,
+        customBodyRender: (value: any) => {
+          return <TickOrCross state={value} />;
+        },
       },
     },
   ];

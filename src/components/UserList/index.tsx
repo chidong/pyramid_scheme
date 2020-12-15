@@ -3,6 +3,7 @@ import { useListVals } from "react-firebase-hooks/database";
 import { FirebaseContext } from "../../components/Firebase";
 import MUIDataTable from "mui-datatables";
 import { Button } from "@material-ui/core";
+import TickOrCross from "../ui/TickOrCross";
 
 interface User {
   uid: string;
@@ -49,7 +50,7 @@ export const UserList = () => {
         filter: true,
         sort: false,
         customBodyRender: (value: any) => {
-          return <div>{value ? "true" : "false"}</div>;
+          return <TickOrCross state={value} />;
         },
       },
     },
@@ -60,7 +61,7 @@ export const UserList = () => {
         filter: true,
         sort: false,
         customBodyRender: (value: any) => {
-          return <div>{value ? "true" : "false"}</div>;
+          return <TickOrCross state={value} />;
         },
       },
     },

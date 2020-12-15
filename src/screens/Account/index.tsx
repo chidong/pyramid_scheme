@@ -23,6 +23,6 @@ const AccountPage = () => {
 
 const condition = (authUser: AuthUser | null) => !!authUser;
 export default compose(
-  withEmailVerification,
+  //withEmailVerification,
   withAuthorization(condition)
 )(AccountPage);

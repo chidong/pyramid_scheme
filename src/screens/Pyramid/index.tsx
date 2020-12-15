@@ -26,6 +26,6 @@ const PyramidPage = () => {
 
 const condition = (authUser: AuthUser | null) => !!authUser;
 export default compose(
-  withEmailVerification,
+  // withEmailVerification,
   withAuthorization(condition)
 )(PyramidPage);

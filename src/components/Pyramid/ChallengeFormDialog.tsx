@@ -14,15 +14,11 @@ import { Alert } from "@material-ui/lab";
 import { Ranking } from "./RankingCard";
 
 interface ChallengeProps {
-  challengerId: string;
-  defenderId: string;
   challengeDate: Date;
   location: string;
 }
 
 const ChallengeSchema = Yup.object().shape({
-  challengerId: Yup.string().required("required"),
-  defenderId: Yup.string().required("required"),
   challengeDate: Yup.date().required("required"),
   location: Yup.string().required("required"),
 });
@@ -54,13 +50,22 @@ export const ChallengeFormDialog = ({
 
   const onSubmit = handleSubmit((data) => {
     // Create Challenge
-    firebase?.challenges().push({
-      challengerId: data.challengerId,
-      defenderId: data.defenderId,
-      challengeDate: Date.parse(data.challengeDate.toString()),
-      location: data.location,
-      createdAt: firebase.serverValue.TIMESTAMP,
-    });
+    firebase
+      ?.challenges()
+      .push({
+        challengerId: challenger.userId,
+        challengerName: challenger.username,
+        defenderId: defender.userId,
+        defenderName: defender.username,
+        challengeDate: Date.parse(data.challengeDate.toString()),
+        location: data.location,
+        createdAt: firebase.serverValue.TIMESTAMP,
+        isAccepted: false,
+        isRecorded: false,
+      })
+      .catch((error: any) => {
+        setError(error);
+      });
     //Update Challenger rank
     firebase?.rankings().child(challenger.id).update({ isInAChallenge: true });
     //Update Defender rank
@@ -81,37 +86,8 @@ export const ChallengeFormDialog = ({
       >
         <DialogTitle id="form-dialog-title">Challenge</DialogTitle>
         <DialogContent>
-          <DialogContentText>Challenge to the max</DialogContentText>
+          <DialogContentText>Challenge {defender?.username}</DialogContentText>
           <form onSubmit={onSubmit}>
-            <TextField
-              variant="outlined"
-              margin="normal"
-              inputRef={register}
-              required
-              fullWidth
-              id="challengerId"
-              label="Challenger"
-              name="challengerId"
-              autoComplete="challengerId"
-              defaultValue={challenger.userId}
-              autoFocus
-              error={errors.challengerId ? true : false}
-              helperText={errors.challengerId?.message}
-            />
-            <TextField
-              variant="outlined"
-              margin="normal"
-              inputRef={register}
-              required
-              fullWidth
-              id="defenderId"
-              label="Defender"
-              name="defenderId"
-              autoComplete="defenderId"
-              defaultValue={defender.userId}
-              error={errors.defenderId ? true : false}
-              helperText={errors.defenderId?.message}
-            />
             <TextField
               variant="outlined"
               margin="normal"

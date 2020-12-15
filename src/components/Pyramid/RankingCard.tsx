@@ -1,4 +1,12 @@
-import { Card, CardContent, Box, Typography, Tooltip } from "@material-ui/core";
+import {
+  Card,
+  CardContent,
+  Box,
+  Typography,
+  Tooltip,
+  CardActionArea,
+  CardActions,
+} from "@material-ui/core";
 import React from "react";
 import { makeStyles, Theme, createStyles } from "@material-ui/core/styles";
 import { ChallengeFormDialog } from "../../components/Pyramid/ChallengeFormDialog";
@@ -7,8 +15,8 @@ import { GiDuel } from "react-icons/gi";
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
     fullHeightCard: {
-      height: "100px",
-      width: "300px",
+      height: "150px",
+      width: "150px",
     },
     currentUserCard: {
       backgroundColor: "#7CFC00",
@@ -37,10 +45,13 @@ const RankingCard = ({ challenger, defender }: RankingCardProps) => {
   const classes = useStyles();
 
   const canChallenge = (challenger: Ranking, defender: Ranking): boolean => {
-    const notYourself = challenger?.userId !== defender.userId;
+    if (!challenger || !defender) {
+      return false;
+    }
+    const notYourself = challenger?.userId !== defender?.userId;
     const notInAChallenge =
-      !challenger?.isInAChallenge && !defender.isInAChallenge;
-    const notAbsent = !challenger?.isAbsent && !defender.isAbsent;
+      !challenger?.isInAChallenge && !defender?.isInAChallenge;
+    const notAbsent = !challenger?.isAbsent && !defender?.isAbsent;
 
     return notYourself && notInAChallenge && notAbsent;
   };
@@ -52,35 +63,38 @@ const RankingCard = ({ challenger, defender }: RankingCardProps) => {
         defender?.userId === challenger?.userId ? classes.currentUserCard : ""
       }`}
     >
-      <CardContent>
-        {defender && (
-          <Box display="flex" flexDirection="column">
-            <Box display="flex" flexDirection="row">
-              <Box flexGrow={1}>
-                <Typography variant="h6">{defender.rank}</Typography>
+      <CardActionArea>
+        <CardContent>
+          {defender && (
+            <Box display="flex" flexDirection="column">
+              <Box display="flex" flexDirection="row">
+                <Box flexGrow={1}>
+                  <Typography variant="h6">{defender.rank}</Typography>
+                </Box>
+                <Box>
+                  {defender.isInAChallenge && (
+                    <Tooltip title="in a challenge">
+                      <Box>
+                        <GiDuel />
+                      </Box>
+                    </Tooltip>
+                  )}
+                </Box>
               </Box>
-              <Box>
-                {defender.isInAChallenge && (
-                  <Tooltip title="in a challenge">
-                    <Box>
-                      <GiDuel />
-                    </Box>
-                  </Tooltip>
-                )}
-              </Box>
+
+              <Box>{defender.username}</Box>
             </Box>
-
-            <Box>User: {defender.username}</Box>
-
-            {canChallenge(challenger as Ranking, defender) && (
-              <ChallengeFormDialog
-                challenger={challenger as Ranking}
-                defender={defender}
-              />
-            )}
-          </Box>
+          )}
+        </CardContent>
+      </CardActionArea>
+      <CardActions>
+        {canChallenge(challenger as Ranking, defender as Ranking) && (
+          <ChallengeFormDialog
+            challenger={challenger as Ranking}
+            defender={defender}
+          />
         )}
-      </CardContent>
+      </CardActions>
     </Card>
   );
 };
