@@ -9,7 +9,7 @@ import DialogTitle from "@material-ui/core/DialogTitle";
 import { FirebaseContext } from "../../components/Firebase";
 import { yupResolver } from "@hookform/resolvers/yup";
 import * as Yup from "yup";
-import { Ranking } from "../../screens/Pyramid/index";
+import { Ranking } from "./Pyramid";
 import { useForm } from "react-hook-form";
 import { Alert } from "@material-ui/lab";
 
