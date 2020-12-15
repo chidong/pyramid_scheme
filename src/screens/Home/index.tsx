@@ -7,14 +7,20 @@ import {
 } from "../../components/Session";
 import { FirebaseContext } from "../../components/Firebase";
 import { AuthUser } from "../../components/Session/withAuthentication";
+import { ChallengeList } from "../../components/Pyramid/ChallengeList";
 
-const Home = () => (
-  <div>
-    <h1>Home</h1>
-    <p>The Home Page is accessible by every signed in user.</p>
-    <Messages />
-  </div>
-);
+const Home = () => {
+  const authUser = useContext(AuthUserContext);
+
+  return (
+    <div>
+      <h1>Home</h1>
+      <p>The Home Page is accessible by every signed in user.</p>
+      <ChallengeList user={authUser as AuthUser} />
+      <Messages />
+    </div>
+  );
+};
 
 interface Message {
   userId: string;

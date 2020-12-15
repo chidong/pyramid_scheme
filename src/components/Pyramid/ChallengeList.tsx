@@ -4,6 +4,7 @@ import { FirebaseContext } from "../../components/Firebase";
 import MUIDataTable from "mui-datatables";
 import TimeFormatter from "../ui/TimeFormatter";
 import TickOrCross from "../ui/TickOrCross";
+import { AuthUser } from "../Session/withAuthentication";
 
 interface Challenge {
   id: string;
@@ -17,7 +18,11 @@ interface Challenge {
   isRecorded: boolean;
 }
 
-export const ChallengeList = () => {
+interface ChallengeListProps {
+  user?: AuthUser;
+}
+
+export const ChallengeList = ({ user }: ChallengeListProps) => {
   const firebase = useContext(FirebaseContext);
   const [challenges, loading, error] = useListVals<Challenge>(
     firebase?.db.ref("challenges"),
@@ -25,6 +30,17 @@ export const ChallengeList = () => {
       keyField: "id",
     }
   );
+
+  let challengesList;
+
+  if (user) {
+    challengesList = challenges?.filter(
+      (challenge) =>
+        challenge.challengerId === user.uid || challenge.defenderId === user.uid
+    );
+  } else {
+    challengesList = challenges;
+  }
 
   const userListColumns = [
     {
@@ -124,10 +140,10 @@ export const ChallengeList = () => {
     <>
       {error && <strong>Error: {error}</strong>}
       {loading && <span>List: Loading...</span>}
-      {challenges && (
+      {challengesList && (
         <MUIDataTable
           title={"Challenge List"}
-          data={challenges as any}
+          data={challengesList as any}
           columns={userListColumns}
           options={options}
         />
