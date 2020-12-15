@@ -1,35 +1,9 @@
-import { Card, CardContent, Grid } from "@material-ui/core";
+import { Grid } from "@material-ui/core";
 import React, { useContext } from "react";
 import { useListVals } from "react-firebase-hooks/database";
 import { FirebaseContext } from "../../components/Firebase";
 import AuthUserContext from "../../components/Session/context";
-import { makeStyles, Theme, createStyles } from "@material-ui/core/styles";
-import { ChallengeFormDialog } from "../../components/Pyramid/ChallengeFormDialog";
-import TimeFormatter from "../../components/ui/TimeFormatter";
-
-const useStyles = makeStyles((theme: Theme) =>
-  createStyles({
-    fullHeightCard: {
-      height: "100px",
-      width: "300px",
-    },
-    currentUserCard: {
-      backgroundColor: "green",
-    },
-  })
-);
-
-export interface Ranking {
-  id: string;
-  userId: string;
-  username: string;
-  rank: number;
-  isInAChallenge: boolean;
-  lastLost: Date | null;
-  lastWon: Date | null;
-  isAbsent: boolean;
-  createdAt: Date;
-}
+import { Ranking, RankingCard } from "./RankingCard";
 
 export const Pyramid = () => {
   const firebase = useContext(FirebaseContext);
@@ -40,20 +14,10 @@ export const Pyramid = () => {
       keyField: "id",
     }
   );
-  const classes = useStyles();
 
   const ownRanking = rankings?.find(
     (ranking) => ranking.userId === authUser?.uid
   );
-
-  const canChallenge = (challenger: Ranking, defender: Ranking): boolean => {
-    const notYourself = challenger?.userId !== defender.userId;
-    const notInAChallenge =
-      !challenger?.isInAChallenge && !defender.isInAChallenge;
-    const notAbsent = !challenger?.isAbsent && !defender.isAbsent;
-
-    return notYourself && notInAChallenge && notAbsent;
-  };
 
   return (
     <div>
@@ -66,33 +30,10 @@ export const Pyramid = () => {
           <Grid container justify="center" spacing={2} key={i}>
             {row.map((ranking: Ranking | null, i) => (
               <Grid item key={i}>
-                <Card
-                  variant="outlined"
-                  className={`${classes.fullHeightCard} ${
-                    ranking?.userId === authUser?.uid
-                      ? classes.currentUserCard
-                      : ""
-                  }`}
-                >
-                  <CardContent>
-                    {ranking && (
-                      <Grid container direction="column">
-                        <Grid item>Rank: {ranking.rank}</Grid>
-                        <Grid item>User: {ranking.username}</Grid>
-                        <Grid item>
-                          Created:{" "}
-                          <TimeFormatter dateTime={ranking.createdAt} />
-                        </Grid>
-                        {canChallenge(ownRanking as Ranking, ranking) && (
-                          <ChallengeFormDialog
-                            challenger={ownRanking as Ranking}
-                            defender={ranking}
-                          />
-                        )}
-                      </Grid>
-                    )}
-                  </CardContent>
-                </Card>
+                <RankingCard
+                  challenger={ownRanking as Ranking}
+                  defender={ranking as Ranking}
+                />
               </Grid>
             ))}
           </Grid>

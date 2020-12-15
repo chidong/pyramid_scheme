@@ -9,9 +9,9 @@ import DialogTitle from "@material-ui/core/DialogTitle";
 import { FirebaseContext } from "../../components/Firebase";
 import { yupResolver } from "@hookform/resolvers/yup";
 import * as Yup from "yup";
-import { Ranking } from "./Pyramid";
 import { useForm } from "react-hook-form";
 import { Alert } from "@material-ui/lab";
+import { Ranking } from "./RankingCard";
 
 interface ChallengeProps {
   challengerId: string;
@@ -27,7 +27,7 @@ const ChallengeSchema = Yup.object().shape({
   location: Yup.string().required("required"),
 });
 
-export interface ChallengeFormDialogProps {
+interface ChallengeFormDialogProps {
   challenger: Ranking;
   defender: Ranking;
 }
