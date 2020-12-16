@@ -7,13 +7,16 @@ import TickOrCross from "../ui/TickOrCross";
 import { AuthUser } from "../Session/withAuthentication";
 import { Button } from "@material-ui/core";
 import { AuthUserContext } from "../../components/Session";
+import { RegisterChallengeResultDialog } from "./RegisterChallengeResultsDialog";
 
-interface Challenge {
+export interface Challenge {
   id: string;
   challengerId: string;
   challengerName: string;
+  challengerRankingId: string;
   defenderId: string;
   defenderName: string;
+  defenderRankingId: string;
   challengeDate: Date;
   location: string;
   isAccepted: boolean;
@@ -150,22 +153,28 @@ export const ChallengeList = ({ user }: ChallengeListProps) => {
                   <Button
                     variant="outlined"
                     color="secondary"
-                    onClick={() => declineChallenge(tableMeta.rowData[0])}
+                    onClick={() =>
+                      declineChallenge(
+                        challenges?.find(
+                          (challenge) => challenge.id === tableMeta.rowData[0]
+                        ) as Challenge
+                      )
+                    }
                   >
                     Decline Challenge
                   </Button>
                 </>
               )}
-              {tableMeta.rowData[7] &&
+              {!tableMeta.rowData[8] &&
                 (tableMeta.rowData[1] === authUser?.uid ||
                   tableMeta.rowData[3] === authUser?.uid) && (
-                  <Button
-                    variant="outlined"
-                    color="secondary"
-                    onClick={() => {}}
-                  >
-                    Register Result
-                  </Button>
+                  <RegisterChallengeResultDialog
+                    challenge={
+                      challenges?.find(
+                        (challenge) => challenge.id === tableMeta.rowData[0]
+                      ) as Challenge
+                    }
+                  />
                 )}
             </>
           );
@@ -190,12 +199,23 @@ export const ChallengeList = ({ user }: ChallengeListProps) => {
       });
   };
 
-  const declineChallenge = (challengeId: string) => {
+  const declineChallenge = (challenge: Challenge) => {
     firebase
       ?.challenges()
-      .child(challengeId)
+      .child(challenge.id)
       .remove()
-      .then(() => {})
+      .then(() => {
+        //Update Challenger rank
+        firebase
+          ?.rankings()
+          .child(challenge.challengerRankingId)
+          .update({ isInAChallenge: false });
+        //Update Defender rank
+        firebase
+          ?.rankings()
+          .child(challenge.defenderRankingId)
+          .update({ isInAChallenge: false });
+      })
       .catch((e) => {
         console.log(e);
       });

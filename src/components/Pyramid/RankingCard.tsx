@@ -37,14 +37,20 @@ export interface Ranking {
 }
 
 interface RankingCardProps {
-  challenger: Ranking;
-  defender: Ranking;
+  challengerRanking: Ranking;
+  defenderRanking: Ranking | null;
 }
 
-const RankingCard = ({ challenger, defender }: RankingCardProps) => {
+const RankingCard = ({
+  challengerRanking,
+  defenderRanking,
+}: RankingCardProps) => {
   const classes = useStyles();
 
-  const canChallenge = (challenger: Ranking, defender: Ranking): boolean => {
+  const canChallenge = (
+    challenger: Ranking,
+    defender: Ranking | null
+  ): boolean => {
     if (!challenger || !defender) {
       return false;
     }
@@ -60,19 +66,21 @@ const RankingCard = ({ challenger, defender }: RankingCardProps) => {
     <Card
       variant="outlined"
       className={`${classes.fullHeightCard} ${
-        defender?.userId === challenger?.userId ? classes.currentUserCard : ""
+        defenderRanking?.userId === challengerRanking?.userId
+          ? classes.currentUserCard
+          : ""
       }`}
     >
       <CardActionArea>
         <CardContent>
-          {defender && (
+          {defenderRanking && (
             <Box display="flex" flexDirection="column">
               <Box display="flex" flexDirection="row">
                 <Box flexGrow={1}>
-                  <Typography variant="h6">{defender.rank}</Typography>
+                  <Typography variant="h6">{defenderRanking.rank}</Typography>
                 </Box>
                 <Box>
-                  {defender.isInAChallenge && (
+                  {defenderRanking.isInAChallenge && (
                     <Tooltip title="in a challenge">
                       <Box>
                         <GiDuel />
@@ -82,18 +90,19 @@ const RankingCard = ({ challenger, defender }: RankingCardProps) => {
                 </Box>
               </Box>
 
-              <Box>{defender.username}</Box>
+              <Box>{defenderRanking.username}</Box>
             </Box>
           )}
         </CardContent>
       </CardActionArea>
       <CardActions>
-        {canChallenge(challenger as Ranking, defender as Ranking) && (
-          <ChallengeFormDialog
-            challenger={challenger as Ranking}
-            defender={defender}
-          />
-        )}
+        {defenderRanking &&
+          canChallenge(challengerRanking as Ranking, defenderRanking) && (
+            <ChallengeFormDialog
+              challengerRanking={challengerRanking as Ranking}
+              defenderRanking={defenderRanking}
+            />
+          )}
       </CardActions>
     </Card>
   );

@@ -31,8 +31,8 @@ export const Pyramid = () => {
             {row.map((ranking: Ranking | null, i) => (
               <Grid item key={i}>
                 <RankingCard
-                  challenger={ownRanking as Ranking}
-                  defender={ranking as Ranking}
+                  challengerRanking={ownRanking as Ranking}
+                  defenderRanking={ranking}
                 />
               </Grid>
             ))}

@@ -11,33 +11,39 @@ import { yupResolver } from "@hookform/resolvers/yup";
 import * as Yup from "yup";
 import { useForm } from "react-hook-form";
 import { Alert } from "@material-ui/lab";
-import { Ranking } from "./RankingCard";
+import { Challenge } from "./ChallengeList";
 
-interface ChallengeProps {
-  challengeDate: Date;
-  location: string;
+interface RegisterChallengeResultsProps {
+  challengerScore: number;
+  defenderScore: number;
 }
 
-const ChallengeSchema = Yup.object().shape({
-  challengeDate: Yup.date().required("required"),
-  location: Yup.string().required("required"),
+const RegisterChallengeResultsSchema = Yup.object().shape({
+  challengerScore: Yup.number().min(0).max(3).required("required"),
+  defenderScore: Yup.number()
+    .min(0)
+    .max(3)
+    .required("required")
+    .notOneOf([Yup.ref("challengerScore")], "Someone has to win"),
 });
 
-interface ChallengeFormDialogProps {
-  challengerRanking: Ranking;
-  defenderRanking: Ranking;
+interface RegisterChallengeResultDialogProps {
+  challenge: Challenge;
 }
 
-export const ChallengeFormDialog = ({
-  challengerRanking,
-  defenderRanking,
-}: ChallengeFormDialogProps) => {
+export const RegisterChallengeResultDialog = ({
+  challenge,
+}: RegisterChallengeResultDialogProps) => {
   const [error, setError] = useState(null);
   const firebase = useContext(FirebaseContext);
   const [open, setOpen] = useState(false);
 
-  const { register, handleSubmit, errors } = useForm<ChallengeProps>({
-    resolver: yupResolver(ChallengeSchema),
+  const {
+    register,
+    handleSubmit,
+    errors,
+  } = useForm<RegisterChallengeResultsProps>({
+    resolver: yupResolver(RegisterChallengeResultsSchema),
   });
 
   const handleClickOpen = () => {
@@ -49,35 +55,30 @@ export const ChallengeFormDialog = ({
   };
 
   const onSubmit = handleSubmit((data) => {
-    // Create Challenge
+    // Update Challenge
     firebase
       ?.challenges()
-      .push({
-        challengerId: challengerRanking.userId,
-        challengerName: challengerRanking.username,
-        challengerRankingId: challengerRanking.id,
-        defenderId: defenderRanking.userId,
-        defenderName: defenderRanking.username,
-        defenderRankingId: defenderRanking.id,
-        challengeDate: Date.parse(data.challengeDate.toString()),
-        location: data.location,
-        createdAt: firebase.serverValue.TIMESTAMP,
-        isAccepted: false,
-        isRecorded: false,
+      .child(challenge.id)
+      .update({
+        challengerScore: data.challengerScore,
+        defenderScore: data.defenderScore,
+        isRecorded: true,
+      })
+      .then(() => {
+        //Update Challenger rank
+        firebase
+          ?.rankings()
+          .child(challenge.challengerRankingId)
+          .update({ isInAChallenge: false });
+        //Update Defender rank
+        firebase
+          ?.rankings()
+          .child(challenge.defenderRankingId)
+          .update({ isInAChallenge: false });
       })
       .catch((error: any) => {
         setError(error);
       });
-    //Update Challenger rank
-    firebase
-      ?.rankings()
-      .child(challengerRanking.id)
-      .update({ isInAChallenge: true });
-    //Update Defender rank
-    firebase
-      ?.rankings()
-      .child(defenderRanking.id)
-      .update({ isInAChallenge: true });
 
     handleClose();
   });
@@ -85,17 +86,19 @@ export const ChallengeFormDialog = ({
   return (
     <div>
       <Button variant="outlined" color="primary" onClick={handleClickOpen}>
-        Challenge
+        Register Results
       </Button>
       <Dialog
         open={open}
         onClose={handleClose}
         aria-labelledby="form-dialog-title"
       >
-        <DialogTitle id="form-dialog-title">Challenge</DialogTitle>
+        <DialogTitle id="form-dialog-title">
+          Register Challenge Results
+        </DialogTitle>
         <DialogContent>
           <DialogContentText>
-            Challenge {defenderRanking?.username}
+            {challenge.challengerName} vs. {challenge.defenderName}
           </DialogContentText>
           <form onSubmit={onSubmit}>
             <TextField
@@ -104,15 +107,12 @@ export const ChallengeFormDialog = ({
               inputRef={register}
               required
               fullWidth
-              id="challengeDate"
-              label="Challenge Date"
-              name="challengeDate"
-              type="datetime-local"
-              InputLabelProps={{
-                shrink: true,
-              }}
-              error={errors.challengeDate ? true : false}
-              helperText={errors.challengeDate?.message}
+              id="challengerScore"
+              label={challenge.challengerName}
+              name="challengerScore"
+              type="number"
+              error={errors.challengerScore ? true : false}
+              helperText={errors.challengerScore?.message}
             />
             <TextField
               variant="outlined"
@@ -120,12 +120,12 @@ export const ChallengeFormDialog = ({
               inputRef={register}
               required
               fullWidth
-              name="location"
-              label="Location"
-              id="location"
-              autoComplete="location"
-              error={errors.location ? true : false}
-              helperText={errors.location?.message}
+              id="defenderScore"
+              label={challenge.defenderName}
+              name="defenderScore"
+              type="number"
+              error={errors.defenderScore ? true : false}
+              helperText={errors.defenderScore?.message}
             />
 
             {error && <Alert severity="error">{(error as any).message}</Alert>}
@@ -142,7 +142,7 @@ export const ChallengeFormDialog = ({
             color="primary"
             onClick={onSubmit}
           >
-            Challenge
+            Register
           </Button>
         </DialogActions>
       </Dialog>
