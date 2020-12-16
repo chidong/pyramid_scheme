@@ -78,7 +78,7 @@ const Navigation: React.FC = (props: any) => {
             </IconButton>
 
             <Typography variant="h5" className={classes.title}>
-              Pyramid
+              Pyramid {authUser && authUser.username}
             </Typography>
 
             {authUser ? (

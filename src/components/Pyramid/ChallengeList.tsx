@@ -5,6 +5,8 @@ import MUIDataTable from "mui-datatables";
 import TimeFormatter from "../ui/TimeFormatter";
 import TickOrCross from "../ui/TickOrCross";
 import { AuthUser } from "../Session/withAuthentication";
+import { Button } from "@material-ui/core";
+import { AuthUserContext } from "../../components/Session";
 
 interface Challenge {
   id: string;
@@ -24,6 +26,7 @@ interface ChallengeListProps {
 
 export const ChallengeList = ({ user }: ChallengeListProps) => {
   const firebase = useContext(FirebaseContext);
+  const authUser = useContext(AuthUserContext);
   const [challenges, loading, error] = useListVals<Challenge>(
     firebase?.db.ref("challenges"),
     {
@@ -129,11 +132,73 @@ export const ChallengeList = ({ user }: ChallengeListProps) => {
         },
       },
     },
+    {
+      name: "Actions",
+      options: {
+        customBodyRender: (value: any, tableMeta: any, updateValue: any) => {
+          return (
+            <>
+              {!tableMeta.rowData[7] && tableMeta.rowData[3] === authUser?.uid && (
+                <>
+                  <Button
+                    variant="outlined"
+                    color="secondary"
+                    onClick={() => acceptChallenge(tableMeta.rowData[0])}
+                  >
+                    Accept Challenge
+                  </Button>
+                  <Button
+                    variant="outlined"
+                    color="secondary"
+                    onClick={() => declineChallenge(tableMeta.rowData[0])}
+                  >
+                    Decline Challenge
+                  </Button>
+                </>
+              )}
+              {tableMeta.rowData[7] &&
+                (tableMeta.rowData[1] === authUser?.uid ||
+                  tableMeta.rowData[3] === authUser?.uid) && (
+                  <Button
+                    variant="outlined"
+                    color="secondary"
+                    onClick={() => {}}
+                  >
+                    Register Result
+                  </Button>
+                )}
+            </>
+          );
+        },
+      },
+    },
   ];
 
   const options: any = {
     filterType: "checkbox",
     customToolbarSelect: () => {},
+  };
+
+  const acceptChallenge = (challengeId: string) => {
+    firebase
+      ?.challenges()
+      .child(challengeId)
+      .update({ isAccepted: true })
+      .then(() => {})
+      .catch((e) => {
+        console.log(e);
+      });
+  };
+
+  const declineChallenge = (challengeId: string) => {
+    firebase
+      ?.challenges()
+      .child(challengeId)
+      .remove()
+      .then(() => {})
+      .catch((e) => {
+        console.log(e);
+      });
   };
 
   return (

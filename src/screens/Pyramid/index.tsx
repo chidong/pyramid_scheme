@@ -5,7 +5,6 @@ import { withAuthorization } from "../../components/Session";
 import { compose } from "recompose";
 import { AuthUser } from "../../components/Session/withAuthentication";
 import { ChallengeList } from "../../components/Pyramid/ChallengeList";
-
 import { Pyramid } from "../../components/Pyramid/Pyramid";
 
 const PyramidPage = () => {
